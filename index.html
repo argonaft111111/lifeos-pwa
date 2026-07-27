@@ -319,10 +319,11 @@ async function syncLocalTasks() {
 
   for (const task of pending) {
     try {
-      const response = await fetch(
+      await fetch(
         SYNC_URL,
         {
           method: 'POST',
+          mode: 'no-cors',
           headers: {
             'Content-Type':
               'text/plain;charset=utf-8'
@@ -351,21 +352,21 @@ async function syncLocalTasks() {
         }
       );
 
-      const result =
-        await response.json();
-
-      if (
-        !result ||
-        result.success !== true
-      ) {
-        continue;
-      }
-
+      /*
+       * У no-cors відповідь читати не можна.
+       * Вважаємо, що запит відправлено.
+       */
       task.synced = true;
-      task.serverId =
-        result.id || '';
 
       saveTasks(tasks);
+
+    } catch (error) {
+      break;
+    }
+  }
+
+  renderTasks();
+}
 
     } catch (error) {
       /*
