@@ -589,6 +589,15 @@ if ('serviceWorker' in navigator) {
 
 updateStatus();
 renderTasks();
+syncLocalTasks();
+
+window.addEventListener(
+  'online',
+  () => {
+    updateStatus();
+    syncLocalTasks();
+  }
+);
 
 </script>
 
