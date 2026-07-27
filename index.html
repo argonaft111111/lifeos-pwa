@@ -8,7 +8,7 @@
     content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
-  <title>LifeOS</title>
+  <title>LifeOS Offline</title>
 
   <link
     rel="manifest"
@@ -28,7 +28,6 @@
     }
 
     .app {
-      width: 100%;
       max-width: 720px;
       margin: 0 auto;
       padding: 14px 12px 90px;
@@ -52,27 +51,110 @@
       color: #777;
     }
 
-    .date {
-      font-size: 13px;
-      color: #777;
-    }
-
     .section {
-      background: white;
+      background: #fff;
       border-radius: 16px;
       padding: 14px;
       margin-bottom: 14px;
     }
 
     .section-title {
-      font-size: 14px;
       font-weight: 700;
       margin-bottom: 10px;
     }
 
-    .loading {
+    .item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 2px 0 0 0;
+    }
+
+    .item-title {
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .meta {
+      margin-top: 4px;
+      font-size: 12px;
       color: #777;
-      padding: 20px 0;
+    }
+
+    .empty {
+      color: #777;
+      padding: 8px 0;
+    }
+
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff;
+      font-size: 30px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.16);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .modal-card {
+      max-width: 520px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .buttons button {
+      min-height: 44px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -84,140 +166,311 @@
   <div class="header">
 
     <div>
-      <div class="title">
-        LifeOS
-      </div>
-
-      <div
-        class="status"
-        id="status"
-      >
-        Запуск...
-      </div>
+      <div class="title">LifeOS</div>
+      <div class="status" id="status"></div>
     </div>
 
-    <div
-      class="date"
-      id="date"
-    ></div>
+    <div id="date"></div>
 
   </div>
 
-  <div id="content">
+  <div class="section">
 
-    <div class="section">
-      <div class="loading">
-        Завантаження LifeOS...
-      </div>
+    <div class="section-title">
+      ЛОКАЛЬНІ ЗАДАЧІ
+      <span id="taskCount"></span>
     </div>
+
+    <div id="taskList"></div>
 
   </div>
 
 </div>
 
+<button
+  class="fab"
+  onclick="openTaskModal()"
+>
+  +
+</button>
+
+
+<div
+  class="modal"
+  id="taskModal"
+>
+  <div class="modal-card">
+
+    <h2>Нова задача</h2>
+
+    <label>
+      Назва
+      <input
+        type="text"
+        id="taskTitle"
+      >
+    </label>
+
+    <label>
+      Сфера
+      <select id="taskArea">
+        <option>Служба</option>
+        <option>Здоров’я</option>
+        <option>Навчання</option>
+        <option>Розвиток</option>
+        <option>Стосунки</option>
+        <option>Побут</option>
+        <option>Документи</option>
+      </select>
+    </label>
+
+    <label>
+      Пріоритет
+      <select id="taskPriority">
+        <option>Низький</option>
+        <option selected>Середній</option>
+        <option>Високий</option>
+      </select>
+    </label>
+
+    <label>
+      Дедлайн
+      <input
+        type="date"
+        id="taskDeadline"
+      >
+    </label>
+
+    <label>
+      Опис
+      <textarea
+        id="taskDescription"
+      ></textarea>
+    </label>
+
+    <div class="buttons">
+
+      <button onclick="saveTask()">
+        Зберегти
+      </button>
+
+      <button onclick="closeTaskModal()">
+        Скасувати
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+
 <script>
 
-const API_URL =
-  'https://script.google.com/macros/s/AKfycbwuAMLftcL9CBqAa2IvawaoW8k70bTq4e3Zfcq1ZphZ4dcHKQiDsnoB65CBNZ0tAA2k9w/exec?api=today';
+const STORAGE_KEY =
+  'LIFE_OS_LOCAL_TASKS_V1';
 
 
-function updateNetworkStatus() {
-  const status =
-    document.getElementById('status');
-
-  status.textContent =
-    navigator.onLine
-      ? 'Онлайн ✓'
-      : 'Офлайн';
-}
-
-
-async function loadLifeOS() {
-  updateNetworkStatus();
-
+function getTasks() {
   try {
-    const response =
-      await fetch(API_URL);
-
-    if (!response.ok) {
-      throw new Error(
-        'API error'
+    const raw =
+      localStorage.getItem(
+        STORAGE_KEY
       );
+
+    if (!raw) {
+      return [];
     }
 
-    const data =
-      await response.json();
+    const tasks =
+      JSON.parse(raw);
 
-    localStorage.setItem(
-      'LIFE_OS_TODAY_CACHE',
-      JSON.stringify(data)
-    );
-
-    renderLifeOS(data);
+    return Array.isArray(tasks)
+      ? tasks
+      : [];
 
   } catch (error) {
-
-    const cached =
-      localStorage.getItem(
-        'LIFE_OS_TODAY_CACHE'
-      );
-
-    if (cached) {
-      renderLifeOS(
-        JSON.parse(cached)
-      );
-
-      document.getElementById(
-        'status'
-      ).textContent =
-        'Офлайн • локальні дані';
-
-      return;
-    }
-
-    document.getElementById(
-      'content'
-    ).innerHTML =
-      '<div class="section">Немає локальних даних.</div>';
+    return [];
   }
 }
 
 
-function renderLifeOS(data) {
+function saveTasks(tasks) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(tasks)
+  );
+}
+
+
+function renderTasks() {
+  const tasks = getTasks();
+
   document.getElementById(
-    'date'
+    'taskCount'
   ).textContent =
-    data.date || '';
+    `(${tasks.length})`;
 
-  const tasks =
-    data.tasks || [];
+  const container =
+    document.getElementById(
+      'taskList'
+    );
 
-  const regulars =
-    data.regulars || [];
+  if (tasks.length === 0) {
+    container.innerHTML =
+      '<div class="empty">Задач поки немає.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    tasks.map(task => `
+      <div class="item">
+
+        <input
+          type="checkbox"
+          ${task.done ? 'checked' : ''}
+          onchange="toggleTask('${task.id}')"
+        >
+
+        <div>
+          <div class="item-title">
+            ${escapeHtml(task.title)}
+          </div>
+
+          <div class="meta">
+            ${escapeHtml(task.area)}
+            •
+            ${escapeHtml(task.priority)}
+            ${
+              task.deadline
+                ? ' • ' + escapeHtml(task.deadline)
+                : ''
+            }
+          </div>
+        </div>
+
+      </div>
+    `).join('');
+}
+
+
+function saveTask() {
+  const title =
+    document.getElementById(
+      'taskTitle'
+    ).value.trim();
+
+  if (!title) {
+    alert('Вкажи назву задачі.');
+    return;
+  }
+
+  const tasks = getTasks();
+
+  tasks.push({
+    id:
+      'LOCAL-' +
+      Date.now() +
+      '-' +
+      Math.random()
+        .toString(36)
+        .slice(2),
+
+    title: title,
+
+    area:
+      document.getElementById(
+        'taskArea'
+      ).value,
+
+    priority:
+      document.getElementById(
+        'taskPriority'
+      ).value,
+
+    deadline:
+      document.getElementById(
+        'taskDeadline'
+      ).value,
+
+    description:
+      document.getElementById(
+        'taskDescription'
+      ).value.trim(),
+
+    createdAt:
+      new Date().toISOString(),
+
+    done: false,
+
+    synced: false
+  });
+
+  saveTasks(tasks);
+
+  clearTaskForm();
+  closeTaskModal();
+  renderTasks();
+}
+
+
+function toggleTask(id) {
+  const tasks = getTasks();
+
+  const task =
+    tasks.find(
+      item => item.id === id
+    );
+
+  if (!task) {
+    return;
+  }
+
+  task.done = !task.done;
+
+  saveTasks(tasks);
+  renderTasks();
+}
+
+
+function openTaskModal() {
+  document.getElementById(
+    'taskModal'
+  ).style.display =
+    'block';
+}
+
+
+function closeTaskModal() {
+  document.getElementById(
+    'taskModal'
+  ).style.display =
+    'none';
+}
+
+
+function clearTaskForm() {
+  document.getElementById(
+    'taskTitle'
+  ).value = '';
 
   document.getElementById(
-    'content'
-  ).innerHTML = `
-    <div class="section">
-      <div class="section-title">
-        ЗАДАЧІ ${tasks.length}
-      </div>
+    'taskDeadline'
+  ).value = '';
 
-      ${tasks.map(task =>
-        `<div>${escapeHtml(task.title)}</div>`
-      ).join('')}
-    </div>
+  document.getElementById(
+    'taskDescription'
+  ).value = '';
+}
 
-    <div class="section">
-      <div class="section-title">
-        РЕГУЛЯРНІ ${regulars.length}
-      </div>
 
-      ${regulars.map(item =>
-        `<div>${escapeHtml(item.title)}</div>`
-      ).join('')}
-    </div>
-  `;
+function updateStatus() {
+  document.getElementById(
+    'status'
+  ).textContent =
+    navigator.onLine
+      ? 'Онлайн • локальне збереження'
+      : 'Офлайн • локальне збереження';
 }
 
 
@@ -231,30 +484,33 @@ function escapeHtml(value) {
 }
 
 
+document.getElementById(
+  'date'
+).textContent =
+  new Date()
+    .toLocaleDateString('uk-UA');
+
+
 window.addEventListener(
   'online',
-  loadLifeOS
+  updateStatus
 );
 
 window.addEventListener(
   'offline',
-  updateNetworkStatus
+  updateStatus
 );
 
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener(
-    'load',
-    () => {
-      navigator.serviceWorker
-        .register('./sw.js')
-        .catch(console.error);
-    }
-  );
+  navigator.serviceWorker
+    .register('./sw.js')
+    .catch(console.error);
 }
 
 
-loadLifeOS();
+updateStatus();
+renderTasks();
 
 </script>
 
