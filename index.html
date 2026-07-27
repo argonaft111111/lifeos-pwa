@@ -301,7 +301,84 @@ function saveTasks(tasks) {
     JSON.stringify(tasks)
   );
 }
+async function syncLocalTasks() {
+  if (!navigator.onLine) {
+    return;
+  }
 
+  const tasks = getTasks();
+
+  const pending =
+    tasks.filter(
+      task => !task.synced
+    );
+
+  if (pending.length === 0) {
+    return;
+  }
+
+  for (const task of pending) {
+    try {
+      const response = await fetch(
+        SYNC_URL,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type':
+              'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify({
+            action: 'syncTask',
+
+            clientRequestId:
+              task.id,
+
+            title:
+              task.title,
+
+            area:
+              task.area,
+
+            priority:
+              task.priority,
+
+            deadline:
+              task.deadline || '',
+
+            description:
+              task.description || ''
+          })
+        }
+      );
+
+      const result =
+        await response.json();
+
+      if (
+        !result ||
+        result.success !== true
+      ) {
+        continue;
+      }
+
+      task.synced = true;
+      task.serverId =
+        result.id || '';
+
+      saveTasks(tasks);
+
+    } catch (error) {
+      /*
+       * Інтернет нестабільний —
+       * задача залишається локально
+       * і спробуємо пізніше.
+       */
+      break;
+    }
+  }
+
+  renderTasks();
+}
 
 function renderTasks() {
   const tasks = getTasks();
