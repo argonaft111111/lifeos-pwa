@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <title>LifeOS</title>
+
+  <link
+    rel="manifest"
+    href="manifest.json"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px 12px 90px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .status {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .date {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .section {
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .loading {
+      color: #777;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="header">
+
+    <div>
+      <div class="title">
+        LifeOS
+      </div>
+
+      <div
+        class="status"
+        id="status"
+      >
+        Запуск...
+      </div>
+    </div>
+
+    <div
+      class="date"
+      id="date"
+    ></div>
+
+  </div>
+
+  <div id="content">
+
+    <div class="section">
+      <div class="loading">
+        Завантаження LifeOS...
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+const API_URL =
+  'https://script.google.com/macros/s/AKfycbwuAMLftcL9CBqAa2IvawaoW8k70bTq4e3Zfcq1ZphZ4dcHKQiDsnoB65CBNZ0tAA2k9w/exec?api=today';
+
+
+function updateNetworkStatus() {
+  const status =
+    document.getElementById('status');
+
+  status.textContent =
+    navigator.onLine
+      ? 'Онлайн ✓'
+      : 'Офлайн';
+}
+
+
+async function loadLifeOS() {
+  updateNetworkStatus();
+
+  try {
+    const response =
+      await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error(
+        'API error'
+      );
+    }
+
+    const data =
+      await response.json();
+
+    localStorage.setItem(
+      'LIFE_OS_TODAY_CACHE',
+      JSON.stringify(data)
+    );
+
+    renderLifeOS(data);
+
+  } catch (error) {
+
+    const cached =
+      localStorage.getItem(
+        'LIFE_OS_TODAY_CACHE'
+      );
+
+    if (cached) {
+      renderLifeOS(
+        JSON.parse(cached)
+      );
+
+      document.getElementById(
+        'status'
+      ).textContent =
+        'Офлайн • локальні дані';
+
+      return;
+    }
+
+    document.getElementById(
+      'content'
+    ).innerHTML =
+      '<div class="section">Немає локальних даних.</div>';
+  }
+}
+
+
+function renderLifeOS(data) {
+  document.getElementById(
+    'date'
+  ).textContent =
+    data.date || '';
+
+  const tasks =
+    data.tasks || [];
+
+  const regulars =
+    data.regulars || [];
+
+  document.getElementById(
+    'content'
+  ).innerHTML = `
+    <div class="section">
+      <div class="section-title">
+        ЗАДАЧІ ${tasks.length}
+      </div>
+
+      ${tasks.map(task =>
+        `<div>${escapeHtml(task.title)}</div>`
+      ).join('')}
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        РЕГУЛЯРНІ ${regulars.length}
+      </div>
+
+      ${regulars.map(item =>
+        `<div>${escapeHtml(item.title)}</div>`
+      ).join('')}
+    </div>
+  `;
+}
+
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+
+window.addEventListener(
+  'online',
+  loadLifeOS
+);
+
+window.addEventListener(
+  'offline',
+  updateNetworkStatus
+);
+
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener(
+    'load',
+    () => {
+      navigator.serviceWorker
+        .register('./sw.js')
+        .catch(console.error);
+    }
+  );
+}
+
+
+loadLifeOS();
+
+</script>
+
+</body>
+</html>
