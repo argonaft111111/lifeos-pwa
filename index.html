@@ -475,11 +475,13 @@ function saveTask() {
     synced: false
   });
 
-  saveTasks(tasks);
+    saveTasks(tasks);
 
   clearTaskForm();
   closeTaskModal();
   renderTasks();
+  syncLocalTasks();
+}
 }
 
 
