@@ -366,17 +366,7 @@ async function syncLocalTasks() {
   }
 
   renderTasks();
-}
 
-    } catch (error) {
-      /*
-       * Інтернет нестабільний —
-       * задача залишається локально
-       * і спробуємо пізніше.
-       */
-      break;
-    }
-  }
 
   renderTasks();
 }
