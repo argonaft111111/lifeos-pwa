@@ -461,7 +461,7 @@ function openScreen(screenName, button) {
 }
 
 
-function loadTodayData() {
+function loadTodayData(completeRegularId) {
   return new Promise(resolve => {
     if (!navigator.onLine) {
       renderToday();
@@ -531,13 +531,7 @@ function loadTodayData() {
       finish();
     };
 
-    script.src =
-      SYNC_URL +
-      '?api=today' +
-      '&callback=' +
-      callbackName +
-      '&t=' +
-      Date.now();
+    callbackName +
 
     document.body.appendChild(script);
 
