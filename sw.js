@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lifeos-v4';
+const CACHE_NAME = 'lifeos-v14';
 
 const APP_FILES = [
   './',
