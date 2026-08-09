@@ -786,7 +786,12 @@ function renderToday() {
       <div class="item">
         <input
           type="checkbox"
-          ${regular.done ? 'checked disabled' : ''}
+          ${
+  regular.done ||
+  isRegularQueued(regular.id)
+    ? 'checked disabled'
+    : ''
+}
           onchange="completeRegularFromPwa(
             '${escapeJs(regular.id)}',
             this
@@ -1483,7 +1488,6 @@ async function completeRegularFromPwa(
   id,
   checkbox
 ) {
-  if (!navigator.onLine) {
   addRegularToQueue(id);
 
   checkbox.checked = true;
@@ -1492,56 +1496,20 @@ async function completeRegularFromPwa(
   renderToday();
   updateStatus();
 
-  return;
-}
-
-  checkbox.disabled = true;
+  if (!navigator.onLine) {
+    return;
+  }
 
   try {
-    await sendCompleteRegularToServer(id);
-
-    let completed = false;
-
-    for (
-      let attempt = 1;
-      attempt <= 3;
-      attempt++
-    ) {
-      await waitForServer(1500);
-      await loadTodayData();
-
-      completed =
-        todayData &&
-        Array.isArray(todayData.regulars) &&
-        todayData.regulars.some(
-          item =>
-            item.id === id &&
-            item.done === true
-        );
-
-      if (completed) {
-        break;
-      }
-    }
-
-    if (!completed) {
-      throw new Error(
-        'Google отримав запит, але виконання не збережено.'
-      );
-    }
-
-    renderToday();
+    await syncRegularQueue();
 
   } catch (error) {
     console.error(error);
 
-    checkbox.checked = false;
-    checkbox.disabled = false;
-
-    alert(
-      'Не вдалося виконати регулярну дію: ' +
-      error.message
-    );
+    // Галочку не скидаємо.
+    // Запис залишається в локальній черзі
+    // і повториться після появи зв’язку.
+    updateStatus();
   }
 }
 
@@ -1864,14 +1832,6 @@ window.addEventListener(
   }
 );
 
-
-window.addEventListener(
-  'online',
-  () => {
-    updateStatus();
-    syncLocalTasks();
-  }
-);
 
 
 if ('serviceWorker' in navigator) {
