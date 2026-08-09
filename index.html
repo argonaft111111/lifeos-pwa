@@ -913,11 +913,20 @@ function loadServerTasks() {
       );
     };
 
+       const regularParameter =
+      completeRegularId
+        ? '&completeRegularId=' +
+          encodeURIComponent(
+            completeRegularId
+          )
+        : '';
+
     script.src =
       SYNC_URL +
-      '?api=tasks' +
+      '?api=today' +
       '&callback=' +
       callbackName +
+      regularParameter +
       '&t=' +
       Date.now();
 
