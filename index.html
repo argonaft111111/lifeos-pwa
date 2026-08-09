@@ -469,12 +469,6 @@ function loadTodayData(completeRegularId) {
       return;
     }
 
-    const callbackName =
-      'lifeOsTodayCallback_' +
-      Date.now() +
-      '_' +
-      Math.random().toString(36).slice(2);
-
     const script =
       document.createElement('script');
 
@@ -482,11 +476,9 @@ function loadTodayData(completeRegularId) {
     let finished = false;
 
     function cleanup() {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
+      clearTimeout(timeoutId);
 
-      delete window[callbackName];
+      delete window.testCallback;
 
       if (script.parentNode) {
         script.parentNode.removeChild(script);
@@ -505,7 +497,7 @@ function loadTodayData(completeRegularId) {
       resolve();
     }
 
-    window[callbackName] = data => {
+    window.testCallback = data => {
       if (
         data &&
         data.success === true &&
@@ -516,11 +508,20 @@ function loadTodayData(completeRegularId) {
         serverLoadError = false;
 
         if (data.date) {
-          document.getElementById('date')
+          document
+            .getElementById('date')
             .textContent = data.date;
         }
+
       } else {
         serverLoadError = true;
+
+        if (data && data.error) {
+          alert(
+            'Google: ' +
+            data.error
+          );
+        }
       }
 
       finish();
@@ -528,24 +529,49 @@ function loadTodayData(completeRegularId) {
 
     script.onerror = () => {
       serverLoadError = true;
+
+      alert(
+        'Не вдалося прочитати відповідь Google.'
+      );
+
       finish();
     };
 
-    callbackName +
+    const parameters =
+      new URLSearchParams({
+        api: 'today',
+        callback: 'testCallback',
+        t: String(Date.now())
+      });
+
+    if (completeRegularId) {
+      parameters.set(
+        'completeRegularId',
+        completeRegularId
+      );
+    }
+
+    script.src =
+      SYNC_URL +
+      '?' +
+      parameters.toString();
 
     document.body.appendChild(script);
 
     timeoutId = setTimeout(
       () => {
         serverLoadError = true;
+
+        alert(
+          'Google не відповів протягом 20 секунд.'
+        );
+
         finish();
       },
-      15000
+      20000
     );
   });
 }
-
-
 function renderToday() {
   const container =
     document.getElementById('todayContent');
