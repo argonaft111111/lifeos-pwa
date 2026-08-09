@@ -1326,7 +1326,46 @@ function sendCompleteRegularToServer(id) {
 }
 
 
+async function completeRegularFromPwa(
+  id,
+  checkbox
+) {
+  if (!navigator.onLine) {
+    checkbox.checked = false;
 
+    alert(
+      'Для виконання регулярної дії потрібен інтернет.'
+    );
+
+    return;
+  }
+
+  checkbox.disabled = true;
+
+  await loadTodayData(id);
+
+  const completed =
+    todayData &&
+    Array.isArray(todayData.regulars) &&
+    todayData.regulars.some(
+      item =>
+        item.id === id &&
+        item.done === true
+    );
+
+  if (!completed) {
+    checkbox.checked = false;
+    checkbox.disabled = false;
+
+    alert(
+      'Google не підтвердив виконання регулярної дії.'
+    );
+
+    return;
+  }
+
+  renderToday();
+}
 
 function toggleLocalTask(id) {
   const tasks =
