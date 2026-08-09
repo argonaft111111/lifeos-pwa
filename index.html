@@ -1341,31 +1341,6 @@ async function completeRegularFromPwa(
 ) {
   if (!navigator.onLine) {
     checkbox.checked = false;
-    alert(
-      'Для виконання регулярної дії потрібен інтернет.'
-    );
-    return;
-  }
-
-  checkbox.disabled = true;
-
-  try {
-    await sendCompleteRegularToServer(id);
-    await loadTodayData();
-  } catch (error) {
-    console.error(error);
-    checkbox.checked = false;
-    checkbox.disabled = false;
-    alert(
-      'Не вдалося виконати регулярну дію: ' +
-      error.message
-    );
-  }async function completeRegularFromPwa(
-  id,
-  checkbox
-) {
-  if (!navigator.onLine) {
-    checkbox.checked = false;
 
     alert(
       'Для виконання регулярної дії потрібен інтернет.'
@@ -1380,10 +1355,6 @@ async function completeRegularFromPwa(
     await sendCompleteRegularToServer(id);
 
   } catch (error) {
-    /*
-     * Google міг виконати дію,
-     * навіть якщо телефон не прочитав відповідь.
-     */
     console.log(error);
   }
 
@@ -1392,7 +1363,6 @@ async function completeRegularFromPwa(
   });
 
   await loadTodayData();
-}
 }
 function toggleLocalTask(id) {
   const tasks =
