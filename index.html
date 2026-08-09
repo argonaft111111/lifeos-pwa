@@ -1242,23 +1242,31 @@ async function completeServerTask(
 
 
 function sendCompleteRegularToServer(id) {
-  const parameters =
-    new URLSearchParams({
-      api: 'completeRegular',
-      id: id,
-      t: String(Date.now())
-    });
+  return new Promise(resolve => {
+    const parameters =
+      new URLSearchParams({
+        api: 'completeRegular',
+        id: id,
+        t: String(Date.now())
+      });
 
-  return fetch(
-    SYNC_URL +
-    '?' +
-    parameters.toString(),
-    {
-      method: 'GET',
-      mode: 'no-cors',
-      cache: 'no-store'
-    }
-  );
+    const frame =
+      document.createElement('iframe');
+
+    frame.style.display = 'none';
+
+    frame.src =
+      SYNC_URL +
+      '?' +
+      parameters.toString();
+
+    document.body.appendChild(frame);
+
+    setTimeout(() => {
+      frame.remove();
+      resolve();
+    }, 3000);
+  });
 }
 
 
