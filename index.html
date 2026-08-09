@@ -479,65 +479,110 @@ function renderTasks() {
 }
 
 
-async function loadServerTasks() {
-  if (!navigator.onLine) {
-    updateStatus();
-    renderTasks();
-    return;
-  }
-
-  try {
-    const response =
-      await fetch(
-        SYNC_URL +
-        '?api=tasks&t=' +
-        Date.now(),
-        {
-          method: 'GET',
-          cache: 'no-store'
-        }
-      );
-
-    if (!response.ok) {
-      throw new Error(
-        'HTTP ' + response.status
-      );
+function loadServerTasks() {
+  return new Promise(resolve => {
+    if (!navigator.onLine) {
+      updateStatus();
+      renderTasks();
+      resolve();
+      return;
     }
 
-    const data =
-      await response.json();
+    const callbackName =
+      'lifeOsTasksCallback_' +
+      Date.now();
 
-    if (
-      !data ||
-      data.success !== true ||
-      !Array.isArray(data.tasks)
-    ) {
-      throw new Error(
-        'API повернуло неправильні дані.'
-      );
+    const script =
+      document.createElement('script');
+
+    let timeoutId;
+
+    function cleanup() {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      delete window[callbackName];
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(
+          script
+        );
+      }
     }
 
-    serverTasks = data.tasks;
-    serverLoadError = false;
+    function finishWithError(error) {
+      console.error(error);
 
-    /*
-     * Після успішного завантаження
-     * прибираємо локальні записи,
-     * які вже були відправлені.
-     */
-    saveLocalTasks(
-      getLocalTasks().filter(
-        task => !task.synced
-      )
+      serverLoadError = true;
+
+      cleanup();
+      renderTasks();
+      updateStatus();
+      resolve();
+    }
+
+    window[callbackName] = data => {
+      if (
+        !data ||
+        data.success !== true ||
+        !Array.isArray(data.tasks)
+      ) {
+        finishWithError(
+          new Error(
+            'API повернуло неправильні дані.'
+          )
+        );
+
+        return;
+      }
+
+      serverTasks = data.tasks;
+      serverLoadError = false;
+
+      saveLocalTasks(
+        getLocalTasks().filter(
+          task => !task.synced
+        )
+      );
+
+      cleanup();
+      renderTasks();
+      updateStatus();
+      resolve();
+    };
+
+    script.onerror = () => {
+      finishWithError(
+        new Error(
+          'Не вдалося завантажити задачі.'
+        )
+      );
+    };
+
+    script.src =
+      SYNC_URL +
+      '?api=tasks' +
+      '&callback=' +
+      callbackName +
+      '&t=' +
+      Date.now();
+
+    document.body.appendChild(
+      script
     );
 
-  } catch (error) {
-    console.error(error);
-    serverLoadError = true;
-  }
-
-  renderTasks();
-  updateStatus();
+    timeoutId = setTimeout(
+      () => {
+        finishWithError(
+          new Error(
+            'Перевищено час очікування API.'
+          )
+        );
+      },
+      15000
+    );
+  });
 }
 
 
