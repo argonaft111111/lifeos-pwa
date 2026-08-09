@@ -1360,7 +1360,39 @@ async function completeRegularFromPwa(
       'Не вдалося виконати регулярну дію: ' +
       error.message
     );
+  }async function completeRegularFromPwa(
+  id,
+  checkbox
+) {
+  if (!navigator.onLine) {
+    checkbox.checked = false;
+
+    alert(
+      'Для виконання регулярної дії потрібен інтернет.'
+    );
+
+    return;
   }
+
+  checkbox.disabled = true;
+
+  try {
+    await sendCompleteRegularToServer(id);
+
+  } catch (error) {
+    /*
+     * Google міг виконати дію,
+     * навіть якщо телефон не прочитав відповідь.
+     */
+    console.log(error);
+  }
+
+  await new Promise(resolve => {
+    setTimeout(resolve, 1000);
+  });
+
+  await loadTodayData();
+}
 }
 function toggleLocalTask(id) {
   const tasks =
