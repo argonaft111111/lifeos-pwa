@@ -555,6 +555,7 @@ const SYNC_URL =
 
 let serverTasks = [];
 let syncInProgress = false;
+let fullSyncInProgress = false;
 let serverLoadError = false;
 let todayData =
   getCachedTodayData();
@@ -1798,7 +1799,29 @@ async function syncLocalTasks() {
   }
 }
 
+async function syncAllData() {
+  if (
+    !navigator.onLine ||
+    fullSyncInProgress
+  ) {
+    return;
+  }
 
+  fullSyncInProgress = true;
+
+  try {
+    await syncLocalTasks();
+    await syncRegularQueue();
+    await syncTaskCompletionQueue();
+
+  } catch (error) {
+    console.error(error);
+
+  } finally {
+    fullSyncInProgress = false;
+    updateStatus();
+  }
+}
 function updateStatus() {
   const status =
     document.getElementById(
@@ -1897,9 +1920,7 @@ window.addEventListener(
   'online',
   () => {
     updateStatus();
-    syncLocalTasks();
-    syncRegularQueue();
-    syncTaskCompletionQueue();
+    syncAllData();
   }
 );
 
@@ -1912,11 +1933,7 @@ if ('serviceWorker' in navigator) {
 }
 
 
-updateStatus();
-renderTasks();
-renderToday();
-syncLocalTasks();
-syncRegularQueue();
+syncAllData();
 </script>
 
 </body>
