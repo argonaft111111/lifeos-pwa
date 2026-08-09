@@ -1444,14 +1444,16 @@ async function completeRegularFromPwa(
   checkbox
 ) {
   if (!navigator.onLine) {
-    checkbox.checked = false;
+  addRegularToQueue(id);
 
-    alert(
-      'Для виконання регулярної дії потрібен інтернет.'
-    );
+  checkbox.checked = true;
+  checkbox.disabled = true;
 
-    return;
-  }
+  renderToday();
+  updateStatus();
+
+  return;
+}
 
   checkbox.disabled = true;
 
