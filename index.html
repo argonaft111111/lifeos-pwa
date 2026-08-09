@@ -1334,110 +1334,104 @@ function handleTaskCheckbox(
   toggleLocalTask(id);
 }
 
+async function sendCompleteTaskToServer(
+  id,
+  completionDate
+) {
+  await fetch(
+    SYNC_URL,
+    {
+      method: 'POST',
 
-function sendCompleteTaskToServer(id) {
-  return new Promise(
-    (resolve, reject) => {
-      const callbackName =
-        'lifeOsCompleteCallback_' +
-        Date.now() +
-        '_' +
-        Math.random()
-          .toString(36)
-          .slice(2);
+      mode: 'no-cors',
 
-      const script =
-        document.createElement('script');
+      cache: 'no-store',
 
-      let timeoutId;
-      let finished = false;
+      headers: {
+        'Content-Type':
+          'text/plain;charset=utf-8'
+      },
 
-      function cleanup() {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-
-        delete window[callbackName];
-
-        if (script.parentNode) {
-          script.parentNode.removeChild(
-            script
-          );
-        }
-      }
-
-      function fail(error) {
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-        cleanup();
-        reject(error);
-      }
-
-      window[callbackName] = result => {
-        if (finished) {
-          return;
-        }
-
-        if (
-          !result ||
-          result.success !== true
-        ) {
-          fail(
-            new Error(
-              result && result.error
-                ? result.error
-                : 'Google не підтвердив завершення задачі.'
-            )
-          );
-
-          return;
-        }
-
-        finished = true;
-        cleanup();
-        resolve(result);
-      };
-
-      script.onerror = () => {
-        fail(
-          new Error(
-            'Не вдалося завершити задачу.'
-          )
-        );
-      };
-
-      const parameters =
-        new URLSearchParams({
-          api: 'completeTask',
-          callback: callbackName,
-          id: id,
-          t: String(Date.now())
-        });
-
-      script.src =
-        SYNC_URL +
-        '?' +
-        parameters.toString();
-
-      document.body.appendChild(
-        script
-      );
-
-      timeoutId = setTimeout(
-        () => {
-          fail(
-            new Error(
-              'Google не відповів протягом 20 секунд.'
-            )
-          );
-        },
-        20000
-      );
+      body: JSON.stringify({
+        action: 'completeTask',
+        id: id,
+        date: completionDate || ''
+      })
     }
   );
+}
+
+
+async function syncTaskCompletionQueue() {
+  if (!navigator.onLine) {
+    return;
+  }
+
+  const queue =
+    getTaskCompletionQueue();
+
+  if (queue.length === 0) {
+    return;
+  }
+
+  const remaining = [];
+
+  for (const item of queue) {
+    try {
+      await sendCompleteTaskToServer(
+        item.id,
+        item.date
+      );
+
+      await waitForServer(1000);
+
+    } catch (error) {
+      console.error(error);
+      remaining.push(item);
+    }
+  }
+
+  saveTaskCompletionQueue(
+    remaining
+  );
+
+  await waitForServer(1000);
+  await loadServerTasks();
+  await loadTodayData();
+
+  renderTasks();
+  renderToday();
+  updateStatus();
+}
+
+
+async function completeServerTask(
+  id,
+  checkbox
+) {
+  addTaskCompletionToQueue(id);
+
+  checkbox.checked = true;
+  checkbox.disabled = true;
+
+  renderTasks();
+  renderToday();
+  updateStatus();
+
+  if (!navigator.onLine) {
+    return;
+  }
+
+  try {
+    await syncTaskCompletionQueue();
+
+  } catch (error) {
+    console.error(error);
+
+    // Галочку не скидаємо.
+    // Задача залишається в черзі.
+    updateStatus();
+  }
 }
 
 
@@ -1905,6 +1899,7 @@ window.addEventListener(
     updateStatus();
     syncLocalTasks();
     syncRegularQueue();
+    syncTaskCompletionQueue();
   }
 );
 
