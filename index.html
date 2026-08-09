@@ -1342,15 +1342,31 @@ async function completeRegularFromPwa(
   try {
     await sendCompleteRegularToServer(id);
 
+    if (
+      todayData &&
+      Array.isArray(todayData.regulars)
+    ) {
+      const regular =
+        todayData.regulars.find(
+          item => item.id === id
+        );
+
+      if (regular) {
+        regular.done = true;
+      }
+    }
+
+    renderToday();
+
   } catch (error) {
-    console.log(error);
+    checkbox.checked = false;
+    checkbox.disabled = false;
+
+    alert(
+      'ТОЧНА ПОМИЛКА: ' +
+      error.message
+    );
   }
-
-  await new Promise(resolve => {
-    setTimeout(resolve, 1000);
-  });
-
-  await loadTodayData();
 }
 
 
