@@ -695,9 +695,16 @@ function getLocalTasks() {
       ? tasks
       : [];
 
-  } catch (error) {
-    console.error(error);
-    return [];
+    } catch (error) {
+    checkbox.checked = false;
+    checkbox.disabled = false;
+
+    alert(
+      'ТОЧНА ПОМИЛКА: ' +
+      error.message
+    );
+
+    return;
   }
 }
 
