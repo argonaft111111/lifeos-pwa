@@ -939,22 +939,13 @@ function loadServerTasks() {
       );
     };
 
-       const regularParameter =
-      completeRegularId
-        ? '&completeRegularId=' +
-          encodeURIComponent(
-            completeRegularId
-          )
-        : '';
-
     script.src =
-      SYNC_URL +
-      '?api=today' +
-      '&callback=' +
-      callbackName +
-      regularParameter +
-      '&t=' +
-      Date.now();
+  SYNC_URL +
+  '?api=tasks' +
+  '&callback=' +
+  callbackName +
+  '&t=' +
+  Date.now();
 
     document.body.appendChild(
       script
