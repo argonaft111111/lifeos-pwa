@@ -815,6 +815,9 @@ function renderToday() {
       <div class="item">
         <input
           type="checkbox"
+          ${isTaskCompletionQueued(task.id)
+  ? 'checked disabled'
+  : ''}
           onchange="completeServerTask(
             '${escapeJs(task.id)}',
             this
@@ -1041,6 +1044,12 @@ function renderTasks() {
 
           <input
             type="checkbox"
+            ${
+  task.source === 'server' &&
+  isTaskCompletionQueued(task.id)
+    ? 'checked disabled'
+    : ''
+}
             onchange="handleTaskCheckbox(
               '${escapeJs(task.id)}',
               '${task.source}',
