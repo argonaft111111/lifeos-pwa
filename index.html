@@ -1297,12 +1297,13 @@ function sendCompleteRegularToServer(id) {
       }
 
       reject(
-        new Error(
-          result && result.error
-            ? result.error
-            : 'Google не підтвердив виконання.'
-        )
-      );
+  new Error(
+    result && result.error
+      ? result.error
+      : 'Відповідь Google: ' +
+        JSON.stringify(result)
+  )
+);
     };
 
     script.onerror = () => {
