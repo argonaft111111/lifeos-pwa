@@ -456,8 +456,11 @@ function renderTasks() {
 
           <input
             type="checkbox"
-            ${isServerTask ? 'disabled' : ''}
-            onchange="toggleLocalTask('${escapeJs(task.id)}')"
+           onchange="handleTaskCheckbox(
+  '${escapeJs(task.id)}',
+  '${task.source}',
+  this
+)"
           >
 
           <div>
@@ -712,7 +715,179 @@ function saveTask() {
   }
 }
 
+function handleTaskCheckbox(
+  id,
+  source,
+  checkbox
+) {
+  if (
+    !checkbox ||
+    !checkbox.checked
+  ) {
+    return;
+  }
 
+  if (source === 'server') {
+    completeServerTask(
+      id,
+      checkbox
+    );
+
+    return;
+  }
+
+  toggleLocalTask(id);
+}
+
+
+function sendCompleteTaskToServer(id) {
+  return new Promise(
+    (resolve, reject) => {
+      const callbackName =
+        'lifeOsCompleteCallback_' +
+        Date.now() +
+        '_' +
+        Math.random()
+          .toString(36)
+          .slice(2);
+
+      const script =
+        document.createElement('script');
+
+      let timeoutId;
+      let finished = false;
+
+      function cleanup() {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        delete window[callbackName];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(
+            script
+          );
+        }
+      }
+
+      function fail(error) {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        cleanup();
+        reject(error);
+      }
+
+      window[callbackName] = result => {
+        if (finished) {
+          return;
+        }
+
+        if (
+          !result ||
+          result.success !== true
+        ) {
+          fail(
+            new Error(
+              result && result.error
+                ? result.error
+                : 'Google не підтвердив завершення задачі.'
+            )
+          );
+
+          return;
+        }
+
+        finished = true;
+        cleanup();
+        resolve(result);
+      };
+
+      script.onerror = () => {
+        fail(
+          new Error(
+            'Не вдалося завершити задачу.'
+          )
+        );
+      };
+
+      const parameters =
+        new URLSearchParams({
+          api: 'completeTask',
+          callback: callbackName,
+          id: id,
+          t: String(Date.now())
+        });
+
+      script.src =
+        SYNC_URL +
+        '?' +
+        parameters.toString();
+
+      document.body.appendChild(
+        script
+      );
+
+      timeoutId = setTimeout(
+        () => {
+          fail(
+            new Error(
+              'Google не відповів протягом 20 секунд.'
+            )
+          );
+        },
+        20000
+      );
+    }
+  );
+}
+
+
+async function completeServerTask(
+  id,
+  checkbox
+) {
+  if (!navigator.onLine) {
+    checkbox.checked = false;
+
+    alert(
+      'Для завершення задачі потрібен інтернет.'
+    );
+
+    return;
+  }
+
+  checkbox.disabled = true;
+
+  try {
+    await sendCompleteTaskToServer(
+      id
+    );
+
+    serverTasks =
+      serverTasks.filter(
+        task => task.id !== id
+      );
+
+    renderTasks();
+
+    await loadServerTasks();
+
+  } catch (error) {
+    console.error(error);
+
+    checkbox.checked = false;
+    checkbox.disabled = false;
+
+    alert(
+      'Не вдалося завершити задачу: ' +
+      error.message
+    );
+  }
+}
 function toggleLocalTask(id) {
   const tasks =
     getLocalTasks();
