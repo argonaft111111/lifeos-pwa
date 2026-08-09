@@ -1359,29 +1359,21 @@ async function completeRegularFromPwa(
 
   checkbox.disabled = true;
 
-  await loadTodayData(id);
+  try {
+    await sendCompleteRegularToServer(id);
+    await loadTodayData();
 
-  const completed =
-    todayData &&
-    Array.isArray(todayData.regulars) &&
-    todayData.regulars.some(
-      item =>
-        item.id === id &&
-        item.done === true
-    );
+  } catch (error) {
+    console.error(error);
 
-  if (!completed) {
     checkbox.checked = false;
     checkbox.disabled = false;
 
     alert(
-      'Google не підтвердив виконання регулярної дії.'
+      'Не вдалося виконати регулярну дію: ' +
+      error.message
     );
-
-    return;
   }
-
-  renderToday();
 }
 
 function toggleLocalTask(id) {
