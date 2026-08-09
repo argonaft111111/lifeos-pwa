@@ -1,298 +1,298 @@
 <!DOCTYPE html>
 <html lang="uk">
-<заголовок>
+<head>
   <meta charset="UTF-8">
 
-  <мета
-    назва="вікно перегляду"
-    content="width=ширина пристрою, initial-scale=1, viewport-fit=cover"
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
   <title>LifeOS</title>
   <link rel="manifest" href="./manifest.json">
 
-  <стиль>
+  <style>
     * {
-      розмір-боксу: border-box;
+      box-sizing: border-box;
     }
 
-    тіло {
-      маржа: 0;
-      сімейство шрифтів: Arial, без засічок;
-      фон: #f4f4f4;
-      колір: #222;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #222;
     }
 
-    .додаток {
-      ширина: 100%;
-      максимальна ширина: 720 пікселів;
-      поле: 0 авто;
-      відступи: 14px 12px 110px;
+    .app {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px 12px 110px;
     }
 
-    .заголовок {
-      дисплей: гнучкий;
-      вирівнювання-вмісту: пробіл-між;
-      вирівнювання елементів: по центру;
-      проміжок: 12 пікселів;
-      нижнє поле: 14 пікселів;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .title {
-      розмір шрифту: 26 пікселів;
-      вага шрифту: 700;
+      font-size: 26px;
+      font-weight: 700;
     }
 
-    .статус {
-      верхній край: 4 пікселі;
-      розмір шрифту: 12 пікселів;
-      колір: #777;
+    .status {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #777;
     }
 
-    .дата {
-      розмір шрифту: 12 пікселів;
-      колір: #777;
-      білий простір: nowrap;
+    .date {
+      font-size: 12px;
+      color: #777;
+      white-space: nowrap;
     }
 
     .section {
-      відступ: 14 пікселів;
-      нижнє поле: 14 пікселів;
-      фон: #fff;
-      радіус межі: 16 пікселів;
+      padding: 14px;
+      margin-bottom: 14px;
+      background: #fff;
+      border-radius: 16px;
     }
 
     .section-title {
-      нижнє поле: 10 пікселів;
-      розмір шрифту: 14 пікселів;
-      вага шрифту: 700;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .item {
-      дисплей: сітка;
-      стовпці-шаблону-сітки: 28px minmax(0, 1fr);
-      проміжок: 10 пікселів;
-      вирівнювання елементів: початок;
-      відступ: 12px 0;
-      нижня межа: 1px суцільна #eee;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee;
     }
 
     .item:last-child {
-      нижня межа: немає;
+      border-bottom: none;
     }
 
-    .item вхід[тип="прапорець"] {
-      ширина: 20 пікселів;
-      висота: 20 пікселів;
-      поле: 2px 0 0;
+    .item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin: 2px 0 0;
     }
 
     .item-title {
-      переповнення-обгортання: будь-де;
-      розмір шрифту: 16 пікселів;
-      висота рядка: 1,3;
+      overflow-wrap: anywhere;
+      font-size: 16px;
+      line-height: 1.3;
     }
 
-    .мета {
-      верхній край: 4 пікселі;
-      розмір шрифту: 12 пікселів;
-      висота рядка: 1,4;
-      колір: #777;
+    .meta {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #777;
     }
 
     .empty {
-      відступ: 8px 0;
-      колір: #777;
-      розмір шрифту: 14 пікселів;
+      padding: 8px 0;
+      color: #777;
+      font-size: 14px;
     }
 
     .fab {
-      положення: фіксоване;
-      праворуч: 20 пікселів;
-      знизу: 82 пікселів;
-      z-індекс: 10;
-      ширина: 58 пікселів;
-      висота: 58 пікселів;
-      межа: 0;
-      радіус межі: 50%;
-      фон: #fff;
-      тінь-боксу: 0 4px 18px rgba(0, 0, 0, 0.16);
-      розмір шрифту: 30 пікселів;
-      курсор: вказівник;
+      position: fixed;
+      right: 20px;
+      bottom: 82px;
+      z-index: 10;
+      width: 58px;
+      height: 58px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
+      font-size: 30px;
+      cursor: pointer;
     }
 
     .modal {
-      дисплей: немає;
-      положення: фіксоване;
-      вставка: 0;
-      z-індекс: 20;
-      відступ: 16 пікселів;
-      переповнення-y: авто;
-      фон: rgba(0, 0, 0, 0.45);
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      padding: 16px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.45);
     }
 
-    .modal-картка {
-      ширина: 100%;
-      максимальна ширина: 520 пікселів;
-      поле: 30px авто;
-      відступ: 18 пікселів;
-      фон: #fff;
-      радіус межі: 16 пікселів;
+    .modal-card {
+      width: 100%;
+      max-width: 520px;
+      margin: 30px auto;
+      padding: 18px;
+      background: #fff;
+      border-radius: 16px;
     }
 
     .modal-card h2 {
-      верхній-поле: 0;
+      margin-top: 0;
     }
 
-    мітка {
-      дисплей: блок;
-      розмір шрифту: 14 пікселів;
+    label {
+      display: block;
+      font-size: 14px;
     }
 
-    вхід[тип="текст"],
-    вхід[тип="дата"],
-    вибрати,
-    текстове поле {
-      ширина: 100%;
-      верхній край: 6 пікселів;
-      нижнє поле: 14 пікселів;
-      відступ: 12 пікселів;
-      рамка: 1px суцільна #ccc;
-      радіус межі: 10 пікселів;
-      фон: #fff;
-      розмір шрифту: 16 пікселів;
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      margin-top: 6px;
+      margin-bottom: 14px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 16px;
     }
 
-    текстове поле {
-      мінімальна висота: 90 пікселів;
-      зміна розміру: вертикальна;
+    textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
     .buttons {
-      дисплей: сітка;
-      стовпці-шаблону-сітки: 1fr 1fr;
-      проміжок: 10 пікселів;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
 
-    .buttons кнопка {
-      мінімальна висота: 44 пікселів;
-      рамка: 1px суцільна #ccc;
-      радіус межі: 10 пікселів;
-      розмір шрифту: 15 пікселів;
-      курсор: вказівник;
+    .buttons button {
+      min-height: 44px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
     }
 
-    .екран {
-      дисплей: немає;
+    .screen {
+      display: none;
     }
 
     .screen.active {
-      дисплей: блок;
+      display: block;
     }
 
-    .назва-програми {
-      розмір шрифту: 16 пікселів;
-      вага шрифту: 700;
+    .program-name {
+      font-size: 16px;
+      font-weight: 700;
     }
 
     .program-text {
-      верхній відступ: 12 пікселів;
-      пробіл: попереднє перенесення;
-      переповнення-обгортання: будь-де;
-      розмір шрифту: 15 пікселів;
-      висота рядка: 1,5;
+      margin-top: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+      line-height: 1.5;
     }
 
     .bottom-nav {
-      положення: фіксоване;
-      ліворуч: 50%;
-      знизу: 0;
-      перетворення: translateX(-50%);
-      z-індекс: 15;
-      дисплей: сітка;
-      стовпці-шаблону-сітки: 1fr 1fr;
-      ширина: 100%;
-      максимальна ширина: 720 пікселів;
-      мінімальна висота: 66 пікселів;
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 720px;
+      min-height: 66px;
       padding-bottom: env(safe-area-inset-bottom);
       border-top: 1px solid #ddd;
-      фон: #fff;
+      background: #fff;
     }
 
     .nav-button {
-      дисплей: гнучкий;
-      напрямок flex: колонка;
-      вирівнювання елементів: по центру;
-      вирівнювання-вмісту: по центру;
-      проміжок: 4 пікселі;
-      межа: 0;
-      фон: прозорий;
-      колір: #777;
-      курсор: вказівник;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 0;
+      background: transparent;
+      color: #777;
+      cursor: pointer;
     }
 
     .nav-button.active {
-      колір: #111;
-      вага шрифту: 700;
+      color: #111;
+      font-weight: 700;
     }
 
     .nav-icon {
-      розмір шрифту: 20 пікселів;
-      висота рядка: 1;
+      font-size: 20px;
+      line-height: 1;
     }
 
-    .nav-мітка {
-      розмір шрифту: 11 пікселів;
+    .nav-label {
+      font-size: 11px;
     }
 
-    @media (максимальна ширина: 420 пікселів) {
-      .додаток {
+    @media (max-width: 420px) {
+      .app {
         padding-right: 10px;
         padding-left: 10px;
       }
 
       .title {
-        розмір шрифту: 24 пікселів;
+        font-size: 24px;
       }
 
       .section {
-        відступ: 12 пікселів;
-        радіус межі: 14 пікселів;
+        padding: 12px;
+        border-radius: 14px;
       }
     }
   </style>
 </head>
 
-<тіло>
+<body>
 
-<div class="додаток">
+<div class="app">
 
-  <div class="заголовок">
+  <div class="header">
     <div>
       <div class="title">LifeOS</div>
       <div class="status" id="status"></div>
     </div>
 
-    <div class="дата" id="дата"></div>
+    <div class="date" id="date"></div>
   </div>
 
-  <div class="екран активний" id="screenToday">
+  <div class="screen active" id="screenToday">
     <div id="todayContent">
-      <div class="розділ">
-        <div class="empty">Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...</div>
+      <div class="section">
+        <div class="empty">Завантаження...</div>
       </div>
     </div>
   </div>
 
   <div class="screen" id="screenTasks">
-    <div class="розділ">
+    <div class="section">
       <div class="section-title">
-        РђРљРўР˜Р'РќР† Р—РђР”РђР§Р†
+        АКТИВНІ ЗАДАЧІ
         <span id="taskCount"></span>
       </div>
 
-      <div id="Список_завдань">
-        <div class="empty">Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...</div>
+      <div id="taskList">
+        <div class="empty">Завантаження...</div>
       </div>
     </div>
   </div>
@@ -301,30 +301,30 @@
 
 <nav class="bottom-nav">
   <button
-    клас="активна кнопка навігації"
-    тип="кнопка"
-    data-screen="Сьогодні"
-    onclick="openScreen('Сьогодні', це)"
+    class="nav-button active"
+    type="button"
+    data-screen="Today"
+    onclick="openScreen('Today', this)"
   >
-    <span class="nav-icon">вЊ,</span>
-    <span class="nav-label">РЎСЊРѕРіРѕРґРЅС–</span>
+    <span class="nav-icon">⌂</span>
+    <span class="nav-label">Сьогодні</span>
   </button>
 
   <button
-    клас="кнопка навігації"
-    тип="кнопка"
-    data-screen="Завдання"
-    onclick="openScreen('Завдання', це)"
+    class="nav-button"
+    type="button"
+    data-screen="Tasks"
+    onclick="openScreen('Tasks', this)"
   >
-    <span class="nav-icon">вњ“</span>
-    <span class="nav-label">Р—Р°РґР°С‡С–</span>
+    <span class="nav-icon">✓</span>
+    <span class="nav-label">Задачі</span>
   </button>
 </nav>
 
 <button
-  клас="фаб"
-  тип="кнопка"
-  aria-label="Р”РѕРґР°С‚Рё Р·Р°РґР°С‡Сѓ"
+  class="fab"
+  type="button"
+  aria-label="Додати задачу"
   onclick="openTaskModal()"
 >
   +
@@ -334,73 +334,73 @@
 
   <div class="modal-card">
 
-    <h2>РќРѕРІР° Р·Р°РґР°С‡Р°</h2>
+    <h2>Нова задача</h2>
 
-    <мітка>
-      РќР°Р·РІР°
+    <label>
+      Назва
 
-      <вхід
-        тип="текст"
-        id="Назва_завдання"
-        автозаповнення="вимкнено"
+      <input
+        type="text"
+        id="taskTitle"
+        autocomplete="off"
       >
     </label>
 
-    <мітка>
-      Суррей
+    <label>
+      Сфера
 
-      <select id="областьзавдання">
-        <option value="Словник">Словник</option>
-        <option value="Р—РґРѕСЂРѕРІвЂ™СЏ">Р—РґРѕСЂРѕРІвЂ™СЏ</option>
-        <option value="РќР°РІС‡Р°РЅРЅСЏ">РќР°РІС‡Р°РЅРЅСЏ</option>
-        <option value="Р РѕР·РІРёС‚РѕРє">Р РѕР·РІРёС‚РѕРє</option>
-        <option value="Р¤С–РЅР°РЅСЃРё">Р¤С–РЅР°РЅСЃРё</option>
-        <option value="РЎС‚РѕСЃСѓРЅРєРё">РЎС‚РѕСЃСѓРЅРєРё</option>
-        <option value="РџРѕР±сґс‚">РџРѕР±сґс‚</option>
-        <option value="Р”РѕРєСѓРјРµРЅС‚Рё">Р”РѕРєСѓРјРµРЅС‚Рё</option>
+      <select id="taskArea">
+        <option value="Служба">Служба</option>
+        <option value="Здоров’я">Здоров’я</option>
+        <option value="Навчання">Навчання</option>
+        <option value="Розвиток">Розвиток</option>
+        <option value="Фінанси">Фінанси</option>
+        <option value="Стосунки">Стосунки</option>
+        <option value="Побут">Побут</option>
+        <option value="Документи">Документи</option>
       </select>
     </label>
 
-    <мітка>
-      РџСЂС–РѕСЂРёС‚РµС‚
+    <label>
+      Пріоритет
 
       <select id="taskPriority">
-        <option value="РќРёР·СЊРєРёР№">РќРёР·СЊРєРёР№</option>
-        <option value="РЎРµСЂРµРґРЅС–Р№" selected>РЎРµСЂРµРґРЅС–Р№</option>
-        <option value="Р'РёСЃРѕРєРёР№">Р'РёСЃРѕРєРёР№</option>
+        <option value="Низький">Низький</option>
+        <option value="Середній" selected>Середній</option>
+        <option value="Високий">Високий</option>
       </select>
     </label>
 
-    <мітка>
-      Р”РµРґР»Р°Р№РЅ
+    <label>
+      Дедлайн
 
-      <вхід
-        тип="дата"
-        id="Кінцевий термін виконання завдання"
+      <input
+        type="date"
+        id="taskDeadline"
       >
     </label>
 
-    <мітка>
-      РћПїРёСЬ
+    <label>
+      Опис
 
-      <textarea id="Опис завдання"></textarea>
+      <textarea id="taskDescription"></textarea>
     </label>
 
     <div class="buttons">
 
       <button
-        тип="кнопка"
-        ідентифікатор="кнопка_збереження"
+        type="button"
+        id="saveButton"
         onclick="saveTask()"
       >
-        Р—Р±РµСЂРµРіС‚Рё
+        Зберегти
       </button>
 
       <button
-        тип="кнопка"
+        type="button"
         onclick="closeTaskModal()"
       >
-        РЎРєР°СЃСѓРІР°С‚Рё
+        Скасувати
       </button>
 
     </div>
@@ -409,141 +409,142 @@
 
 </div>
 
-<скрипт>
-const КЛЮЧ_ЗБЕРІГАННЯ =
+<script>
+const STORAGE_KEY =
   'LIFE_OS_LOCAL_TASKS_V1';
 
 const SYNC_URL =
   'https://script.google.com/macros/s/AKfycbz_J1N7kIJyvjUg0FajYVsxolMqnuhJoSa3snI4IeqrYiDuEZ564Xs0z0-m_M_zrLZGMQ/exec';
-  
-нехай serverTasks = [];
-нехай синхронізаціяПрогресу = хибна;
-нехай serverLoadError = false;
-нехай сьогоднішніДані = null;
-нехай activeScreen = 'Сьогодні';
+
+let serverTasks = [];
+let syncInProgress = false;
+let serverLoadError = false;
+let todayData = null;
+let activeScreen = 'Today';
 
 
-функція openScreen(назваекрану, кнопка) {
-  документ
+function openScreen(screenName, button) {
+  document
     .querySelectorAll('.screen')
-    .forEach(екран => {
-      screen.classList.remove('активний');
+    .forEach(screen => {
+      screen.classList.remove('active');
     });
 
-  документ
+  document
     .querySelectorAll('.nav-button')
-    .forEach(елемент => {
-      item.classList.remove('активний');
+    .forEach(item => {
+      item.classList.remove('active');
     });
 
   const screen = document.getElementById(
-    'екран' + назва_екрану
+    'screen' + screenName
   );
 
-  якщо (!екран) {
-    повернення;
+  if (!screen) {
+    return;
   }
 
-  screen.classList.add('активний');
+  screen.classList.add('active');
 
-  якщо (кнопка) {
-    button.classList.add('активний');
+  if (button) {
+    button.classList.add('active');
   }
+    }
 
-  активнийЕкран = Ім'яЕкрана;
+  activeScreen = screenName;
 
-  якщо (screenName === 'Сьогодні') {
-    завантажитиСьогоднішніДані();
-  } інше {
+  if (screenName === 'Today') {
+    loadTodayData();
+  } else {
     loadServerTasks();
   }
 }
 
 
-функція завантаженняСьогодніДаних() {
-  повернути нову обіцянку(вирішити => {
-    якщо (!navigator.onLine) {
-      рендерСьогодні();
-      вирішити();
-      повернення;
+function loadTodayData() {
+  return new Promise(resolve => {
+    if (!navigator.onLine) {
+      renderToday();
+      resolve();
+      return;
     }
 
-    constНазва зворотного виклику =
+    const callbackName =
       'lifeOsTodayCallback_' +
-      Дата.зараз() +
+      Date.now() +
       '_' +
       Math.random().toString(36).slice(2);
 
-    константний скрипт =
-      document.createElement('скрипт');
+    const script =
+      document.createElement('script');
 
-    нехай timeoutId;
-    нехай закінчено = хибно;
+    let timeoutId;
+    let finished = false;
 
-    функція очищення() {
-      якщо (ідентифікатор часу очікування) {
-        clearTimeout(ідентифікатор_тайму_ауту);
+    function cleanup() {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
 
-      видалити вікно[ім'я зворотного виклику];
+      delete window[callbackName];
 
-      якщо (script.parentNode) {
-        скрипт.parentNode.removeChild(скрипт);
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
       }
     }
 
-    функція завершення() {
-      якщо (завершено) {
-        повернення;
+    function finish() {
+      if (finished) {
+        return;
       }
 
-      закінчено = правда;
-      очищення();
-      рендерСьогодні();
-      оновленняСтатусу();
-      вирішити();
+      finished = true;
+      cleanup();
+      renderToday();
+      updateStatus();
+      resolve();
     }
 
-    вікно[ім'я зворотного виклику] = дані => {
-      якщо (
-        дані
+    window[callbackName] = data => {
+      if (
+        data &&
         data.success === true &&
         Array.isArray(data.tasks) &&
         Array.isArray(data.regulars)
       ) {
-        сьогоднішніДані = дані;
-        ПомилкаЗавантаженняСервера = хибність;
+        todayData = data;
+        serverLoadError = false;
 
-        якщо (дані.дата) {
-          document.getElementById('дата')
-            .textContent = дані.дата;
+        if (data.date) {
+          document.getElementById('date')
+            .textContent = data.date;
         }
-      } інше {
-        ПомилкаЗавантаження_сервера = true;
+      } else {
+        serverLoadError = true;
       }
 
-      фініш();
+      finish();
     };
 
-    скрипт.onerror = () => {
-      ПомилкаЗавантаження_сервера = true;
-      фініш();
+    script.onerror = () => {
+      serverLoadError = true;
+      finish();
     };
 
-    скрипт.src =
+    script.src =
       SYNC_URL +
-      '?api=сьогодні' +
-      '&зворотний виклик=' +
-      Ім'я зворотного виклику +
+      '?api=today' +
+      '&callback=' +
+      callbackName +
       '&t=' +
-      Дата.зараз();
+      Date.now();
 
-    document.body.appendChild(скрипт);
+    document.body.appendChild(script);
 
-    Ідентифікатор_тайму_ауту = встановити_час_ауту(
+    timeoutId = setTimeout(
       () => {
-        ПомилкаЗавантаження_сервера = true;
-        фініш();
+        serverLoadError = true;
+        finish();
       },
       15000
     );
@@ -551,59 +552,59 @@ const SYNC_URL =
 }
 
 
-функція renderToday() {
-  константний контейнер =
-    document.getElementById('сьогоднішнійВміст');
+function renderToday() {
+  const container =
+    document.getElementById('todayContent');
 
-  якщо (!дані сьогодні) {
-    контейнер.innerHTML = `
-      <div class="розділ">
+  if (!todayData) {
+    container.innerHTML = `
+      <div class="section">
         <div class="empty">
           ${navigator.onLine
-            ? 'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РґР°РЅС– РґРЅСЏ.'
-            : 'Р”Р°РЅС– РґРЅСЏ РЅРµРґРѕСЃС‚СѓРїРЅС– РѕС„Р»Р°Р№РЅ.'}
+            ? 'Не вдалося завантажити дані дня.'
+            : 'Дані дня недоступні офлайн.'}
         </div>
       </div>
     `;
-    повернення;
+    return;
   }
 
   const tasks = todayData.tasks || [];
   const regulars = todayData.regulars || [];
   const program = todayData.program || {
-    показано: хибно
+    shown: false
   };
 
-  нехай html = `
-    <div class="розділ">
+  let html = `
+    <div class="section">
       <div class="section-title">
-        Р—РђР”РђР§Р† ${tasks.length} / 15
+        ЗАДАЧІ ${tasks.length} / 15
       </div>
   `;
 
-  якщо (tasks.length === 0) {
-    html += '<div class="empty">Р—Р°РґР°С‡ РЅР° СЃСЊРѕРіРѕРґРЅС– РЅРµРјР°С”.</div>';
+  if (tasks.length === 0) {
+    html += '<div class="empty">Задач на сьогодні немає.</div>';
   }
 
   tasks.forEach(task => {
     html += `
       <div class="item">
-        <вхід
-          тип="прапорець"
+        <input
+          type="checkbox"
           onchange="completeServerTask(
-            '${escapeJs(ідентифікатор завдання)}',
-            це
+            '${escapeJs(task.id)}',
+            this
           )"
         >
 
         <div>
-          <div class="назва-елемента">
-            ${escapeHtml(завдання.назва)}
+          <div class="item-title">
+            ${escapeHtml(task.title)}
           </div>
           <div class="meta">
             ${escapeHtml(task.priority || '')}
             ${task.deadline
-              ? ' в' ' + escapeHtml(task.deadline)
+              ? ' • ' + escapeHtml(task.deadline)
               : ''}
           </div>
         </div>
@@ -613,30 +614,30 @@ const SYNC_URL =
 
   html += `
     </div>
-    <div class="розділ">
+    <div class="section">
       <div class="section-title">
-        Р Р•Р“РЈР›РЇР РќР† ${regulars.length}
+        РЕГУЛЯРНІ ${regulars.length}
       </div>
   `;
 
-  якщо (regulars.length === 0) {
-    html += '<div class="empty">Р РµРіСѓР»СЏСЂРЅРёС… РґС–Р№ РЅРµРјР°С”.</div>';
+  if (regulars.length === 0) {
+    html += '<div class="empty">Регулярних дій немає.</div>';
   }
 
   regulars.forEach(regular => {
     html += `
       <div class="item">
-        <вхід
-          тип="прапорець"
-          ${regular.done ? 'перевірено вимкнено' : ''}
+        <input
+          type="checkbox"
+          ${regular.done ? 'checked disabled' : ''}
           onchange="completeRegularFromPwa(
             '${escapeJs(regular.id)}',
-            це
+            this
           )"
         >
 
         <div>
-          <div class="назва-елемента">
+          <div class="item-title">
             ${escapeHtml(regular.title)}
           </div>
           <div class="meta">
@@ -649,172 +650,172 @@ const SYNC_URL =
 
   html += `
     </div>
-    <div class="розділ">
-      <div class="section-title">РџР РћР“Р РђРњРђ</div>
+    <div class="section">
+      <div class="section-title">ПРОГРАМА</div>
   `;
 
-  якщо (program.shown) {
+  if (program.shown) {
     html += `
-      <div class="назва-програми">
-        ${escapeHtml(назва_програми || '')}
+      <div class="program-name">
+        ${escapeHtml(program.name || '')}
       </div>
       <div class="meta">
-        µРЅСЊ ${escapeHtml(program.day)} /
+        День ${escapeHtml(program.day)} /
         ${escapeHtml(program.totalDays)} •
         ${escapeHtml(program.type || '')}
       </div>
       <div class="program-text">
-        ${escapeHtml(program.тренування || '')}
+        ${escapeHtml(program.workout || '')}
       </div>
     `;
-  } інше {
-    html += '<div class="empty">РђРєС‚РёРІРЅРѕС— РїСЂРѕРіСЂР°РјРё РЅР° СЃСЊРѕРіРѕРґРЅС– РЅРµРјР°С”.</div>';
+  } else {
+    html += '<div class="empty">Активної програми на сьогодні немає.</div>';
   }
 
   html += '</div>';
-  контейнер.innerHTML = html;
+  container.innerHTML = html;
 }
 
 
-функція getLocalTasks() {
-  спробуйте {
-    константа сирого значення =
+function getLocalTasks() {
+  try {
+    const raw =
       localStorage.getItem(
         STORAGE_KEY
       );
 
-    якщо (!сире) {
-      повернути [];
+    if (!raw) {
+      return [];
     }
 
-    константні завдання =
-      JSON.parse(сирий);
+    const tasks =
+      JSON.parse(raw);
 
-    повернути Array.isArray(завдання)
-      завдання
+    return Array.isArray(tasks)
+      ? tasks
       : [];
 
-  } catch (помилка) {
-    console.error(помилка);
-    повернути [];
+  } catch (error) {
+    console.error(error);
+    return [];
   }
 }
 
 
-функція saveLocalTasks(завдання) {
+function saveLocalTasks(tasks) {
   localStorage.setItem(
-    КЛЮЧ_ЗБЕРІГАННЯ,
-    JSON.stringify(завдання)
+    STORAGE_KEY,
+    JSON.stringify(tasks)
   );
 }
 
 
-функція getPendingTasks() {
-  повернути getLocalTasks().filter(
-    завдання => !task.синхронізовано
+function getPendingTasks() {
+  return getLocalTasks().filter(
+    task => !task.synced
   );
 }
 
 
-функція getPendingCount() {
-  повернути getPendingTasks().довжина;
+function getPendingCount() {
+  return getPendingTasks().length;
 }
 
 
-функція renderTasks() {
-  const локальніЗавдання =
+function renderTasks() {
+  const localTasks =
     getPendingTasks().map(
-      завдання => ({
-        ...завдання,
-        джерело: «місцеві»
+      task => ({
+        ...task,
+        source: 'local'
       })
     );
 
   const googleTasks =
     serverTasks.map(
-      завдання => ({
-        ...завдання,
-        джерело: «сервер»
+      task => ({
+        ...task,
+        source: 'server'
       })
     );
 
-  константні завдання = [
+  const tasks = [
     ...googleTasks,
-    ...локальніЗавдання
+    ...localTasks
   ];
 
-  документ
-    .getElementById('Кількість_задач')
+  document
+    .getElementById('taskCount')
     .textContent =
       `(${tasks.length})`;
 
-  константний контейнер =
+  const container =
     document.getElementById(
-      Список завдань
+      'taskList'
     );
 
-  якщо (tasks.length === 0) {
-    контейнер.innerHTML =
-      '<div class="empty">РђРєС‚РёРІРЅРёС… Р·Р°РґР°С‡ РЅРµРјР°С”.</div>';
+  if (tasks.length === 0) {
+    container.innerHTML =
+      '<div class="empty">Активних задач немає.</div>';
 
-    повернення;
+    return;
   }
 
-  контейнер.innerHTML =
+  container.innerHTML =
     tasks.map(task => {
 
       const isServerTask =
-        task.source === 'сервер';
+        task.source === 'server';
 
-      const вихіднийТекст =
+      const sourceText =
         isServerTask
-          «Google Таблиці»
-          : 'РћС‡С–РєСѓС” СЃРёРЅС…СЂРѕРЅС–Р·Р°с†С–І—;
+          ? 'Google Sheets'
+          : 'Очікує синхронізації';
 
       const metaParts = [];
 
-      якщо (task.area) {
+      if (task.area) {
         metaParts.push(
           escapeHtml(task.area)
         );
       }
 
-      якщо (task.status) {
+      if (task.status) {
         metaParts.push(
           escapeHtml(task.status)
         );
       }
 
-      якщо (task.priority) {
+      if (task.priority) {
         metaParts.push(
           escapeHtml(task.priority)
         );
       }
 
-      якщо (task.deadline) {
+      if (task.deadline) {
         metaParts.push(
           escapeHtml(task.deadline)
         );
       }
 
-      metaParts.push(джерельнийТекст);
+      metaParts.push(sourceText);
 
-      повернення `
+      return `
         <div class="item">
 
-          <вхід
-            тип="прапорець"
-           onchange="handleTaskCheckbox("
-  '${escapeJs(ідентифікатор завдання)}',
-  '${task.source}',
-  це
-)"
+          <input
+            type="checkbox"
+            onchange="handleTaskCheckbox(
+              '${escapeJs(task.id)}',
+              '${task.source}',
+              this
+            )"
           >
 
           <div>
 
-            <div class="назва-елемента">
-              ${escapeHtml(завдання.назва)}
+            <div class="item-title">
+              ${escapeHtml(task.title)}
             </div>
 
             <div class="meta">
@@ -826,108 +827,108 @@ const SYNC_URL =
         </div>
       `;
     })
-    .приєднатися('');
+    .join('');
 }
 
 
-функція loadServerTasks() {
-  повернути нову обіцянку(вирішити => {
-    якщо (!navigator.onLine) {
-      оновленняСтатусу();
+function loadServerTasks() {
+  return new Promise(resolve => {
+    if (!navigator.onLine) {
+      updateStatus();
       renderTasks();
-      вирішити();
-      повернення;
+      resolve();
+      return;
     }
 
-    constНазва зворотного виклику =
+    const callbackName =
       'lifeOsTasksCallback_' +
-      Дата.зараз();
+      Date.now();
 
-    константний скрипт =
-      document.createElement('скрипт');
+    const script =
+      document.createElement('script');
 
-    нехай timeoutId;
+    let timeoutId;
 
-    функція очищення() {
-      якщо (ідентифікатор часу очікування) {
-        clearTimeout(ідентифікатор_тайму_ауту);
+    function cleanup() {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
       }
 
-      видалити вікно[ім'я зворотного виклику];
+      delete window[callbackName];
 
-      якщо (script.parentNode) {
+      if (script.parentNode) {
         script.parentNode.removeChild(
-          сценарій
+          script
         );
       }
     }
 
-    функція finishWithError(помилка) {
-      console.error(помилка);
+    function finishWithError(error) {
+      console.error(error);
 
-      ПомилкаЗавантаження_сервера = true;
+      serverLoadError = true;
 
-      очищення();
+      cleanup();
       renderTasks();
-      оновленняСтатусу();
-      вирішити();
+      updateStatus();
+      resolve();
     }
 
-    вікно[ім'я зворотного виклику] = дані => {
-      якщо (
-        !дані ||
+    window[callbackName] = data => {
+      if (
+        !data ||
         data.success !== true ||
-        !Array.isArray(дані.завдання)
+        !Array.isArray(data.tasks)
       ) {
         finishWithError(
-          нова помилка(
-            'API РїРѕРІРµСЂРЅСѓР»Рѕ РЅРµРїСЂР°РІРёР»СЊРЅС– РґР°РЅС–.'
+          new Error(
+            'API повернуло неправильні дані.'
           )
         );
 
-        повернення;
+        return;
       }
 
-      серверніЗавдання = дані.завдання;
-      ПомилкаЗавантаженняСервера = хибність;
+      serverTasks = data.tasks;
+      serverLoadError = false;
 
-      зберегтиЛокальніЗавдання(
+      saveLocalTasks(
         getLocalTasks().filter(
-          завдання => !task.синхронізовано
+          task => !task.synced
         )
       );
 
-      очищення();
-      renderTasks();
-      оновленняСтатусу();
-      вирішити();
+      cleanup();
+            renderTasks();
+      updateStatus();
+      resolve();
     };
 
-    скрипт.onerror = () => {
+    script.onerror = () => {
       finishWithError(
-        нова помилка(
-          'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё Р·Р°РґР°С‡С–.'
+        new Error(
+          'Не вдалося завантажити задачі.'
         )
       );
     };
 
-    скрипт.src =
+    script.src =
       SYNC_URL +
-      '?api=завдання' +
-      '&зворотний виклик=' +
-      Ім'я зворотного виклику +
+      '?api=tasks' +
+      '&callback=' +
+      callbackName +
       '&t=' +
-      Дата.зараз();
+      Date.now();
 
     document.body.appendChild(
-      сценарій
+      script
     );
 
-    Ідентифікатор_тайму_ауту = встановити_час_ауту(
+    timeoutId = setTimeout(
       () => {
         finishWithError(
-          нова помилка(
-            'РџРµСЂРµРІРёС‰РµРЅРѕ С‡Р°СЃ РѕС‡С–РєСѓРІР°РЅРЅСЏ API.'
+          new Error(
+            'Перевищено час очікування API.'
           )
         );
       },
@@ -937,253 +938,254 @@ const SYNC_URL =
 }
 
 
-функція openTaskModal() {
-  документ
-    .getElementById('модальний_модуль_завдання')
-    .style.display = 'блок';
+function openTaskModal() {
+  document
+    .getElementById('taskModal')
+    .style.display = 'block';
 
-  встановитиЧасОути(() => {
-    документ
-      .getElementById('НазваЗавдання')
-      .фокус();
+  setTimeout(() => {
+    document
+      .getElementById('taskTitle')
+      .focus();
   }, 50);
 }
 
 
-функція closeTaskModal() {
-  документ
-    .getElementById('модальний_модуль_завдання')
-    .style.display = 'немає';
+function closeTaskModal() {
+  document
+    .getElementById('taskModal')
+    .style.display = 'none';
 }
 
 
-функція clearTaskForm() {
-  документ
-    .getElementById('НазваЗавдання')
-    .значення = '';
+function clearTaskForm() {
+  document
+    .getElementById('taskTitle')
+    .value = '';
 
-  документ
-    .getElementById('ПріоритетЗавдання')
-    .value = 'РЎРµСЂРµРґРЅС–Р№';
+  document
+    .getElementById('taskPriority')
+    .value = 'Середній';
 
-  документ
-    .getElementById('Кінцевий_термін_виконання')
-    .значення = '';
+  document
+    .getElementById('taskDeadline')
+    .value = '';
 
-  документ
-    .getElementById('ОписЗавдання')
-    .значення = '';
+  document
+    .getElementById('taskDescription')
+    .value = '';
 }
 
 
-функція saveTask() {
-  constКнопкаЗбереження =
+function saveTask() {
+  const saveButton =
     document.getElementById(
-      «Кнопка збереження»
+      'saveButton'
     );
 
-  константний заголовок =
-    документ
-      .getElementById('НазваЗавдання')
+  const title =
+    document
+      .getElementById('taskTitle')
       .value
-      .обрізати();
+      .trim();
 
-  якщо (!назва) {
-    alert('Р'РєР°Р¶Рё РЅР°Р·РІСѓ Р·Р°РґР°С‡С–.');
-    повернення;
+  if (!title) {
+    alert('Вкажи назву задачі.');
+    return;
   }
 
   saveButton.disabled = true;
   saveButton.textContent =
-    'Р—Р±РµСЂРµР¶РµРЅРЅСЏвЂ¦';
+    'Збереження…';
 
-  спробуйте {
-    константні завдання =
-      отриматиЛокальніЗавдання();
+  try {
+    const tasks =
+      getLocalTasks();
 
     tasks.push({
-      ідентифікатор:
-        «МІСЦЕВИЙ-» +
-        Дата.зараз() +
+      id:
+        'LOCAL-' +
+        Date.now() +
         '-' +
         Math.random()
           .toString(36)
           .slice(2),
 
-      заголовок: заголовок,
+      title: title,
 
-      площа:
-        документ
-          .getElementById('областьзавдання')
-          .значення,
+      area:
+        document
+          .getElementById('taskArea')
+          .value,
 
-      пріоритет:
-        документ
-          .getElementById('ПріоритетЗавдання')
-          .значення,
+      priority:
+        document
+          .getElementById('taskPriority')
+          .value,
 
-      термін:
-        документ
-          .getElementById('Кінцевий_термін_виконання')
-          .значення,
+      deadline:
+        document
+          .getElementById('taskDeadline')
+          .value,
 
-      опис:
-        документ
-          .getElementById('ОписЗавдання')
+      description:
+        document
+          .getElementById('taskDescription')
           .value
-          .обрізати(),
+          .trim(),
 
-      створено за:
-        нова Дата().toISOString(),
+      createdAt:
+        new Date().toISOString(),
 
-      синхронізовано: хибно
+      synced: false
     });
 
-    зберегтиЛокальніЗавдання(завдання);
+    saveLocalTasks(tasks);
 
-    очиститиФормуЗавдання();
-    закритиМодальнийМодал();
+    clearTaskForm();
+    closeTaskModal();
 
     renderTasks();
-    оновленняСтатусу();
+    updateStatus();
 
-    синхронізуватиЛокальніЗавдання();
+    syncLocalTasks();
 
-  } catch (помилка) {
-    console.error(помилка);
+  } catch (error) {
+    console.error(error);
 
-    сповіщення(
-      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё Р·Р°РґР°С‡Сѓ.'
+    alert(
+      'Не вдалося зберегти задачу.'
     );
 
-  } нарешті {
+  } finally {
     saveButton.disabled = false;
     saveButton.textContent =
-      'Р—Р±РµСЂРµРіС‚Рё';
+      'Зберегти';
   }
 }
 
-функція handleTaskCheckbox(
-  ідентифікатор,
-  джерело,
-  прапорець
+
+function handleTaskCheckbox(
+  id,
+  source,
+  checkbox
 ) {
-  якщо (
-    !прапорець ||
-    !прапорець.перевірено
+  if (
+    !checkbox ||
+    !checkbox.checked
   ) {
-    повернення;
+    return;
   }
 
-  якщо (джерело === 'сервер') {
-    завершенняЗавданняСервера(
-      ідентифікатор,
-      прапорець
+  if (source === 'server') {
+    completeServerTask(
+      id,
+      checkbox
     );
 
-    повернення;
+    return;
   }
 
-  перемиканняЛокальногоЗавдання(ідентифікатор);
+  toggleLocalTask(id);
 }
 
 
-функція sendCompleteTaskToServer(id) {
-  повернути нову обіцянку(
-    (вирішити, відхилити) => {
-      constНазва зворотного виклику =
+function sendCompleteTaskToServer(id) {
+  return new Promise(
+    (resolve, reject) => {
+      const callbackName =
         'lifeOsCompleteCallback_' +
-        Дата.зараз() +
+        Date.now() +
         '_' +
         Math.random()
           .toString(36)
           .slice(2);
 
-      константний скрипт =
-        document.createElement('скрипт');
+      const script =
+        document.createElement('script');
 
-      нехай timeoutId;
-      нехай закінчено = хибно;
+      let timeoutId;
+      let finished = false;
 
-      функція очищення() {
-        якщо (ідентифікатор часу очікування) {
-          clearTimeout(ідентифікатор_тайму_ауту);
+      function cleanup() {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
 
-        видалити вікно[ім'я зворотного виклику];
+        delete window[callbackName];
 
-        якщо (script.parentNode) {
+        if (script.parentNode) {
           script.parentNode.removeChild(
-            сценарій
+            script
           );
         }
       }
 
-      функція fail(помилка) {
-        якщо (завершено) {
-          повернення;
+      function fail(error) {
+        if (finished) {
+          return;
         }
 
-        закінчено = правда;
-        очищення();
-        відхилити(помилка);
+        finished = true;
+        cleanup();
+        reject(error);
       }
 
-      вікно[ім'я зворотного виклику] = результат => {
-        якщо (завершено) {
-          повернення;
+      window[callbackName] = result => {
+        if (finished) {
+          return;
         }
 
-        якщо (
-          !результат ||
-          результат.успіх !== true
+        if (
+          !result ||
+          result.success !== true
         ) {
-          невдача(
-            нова помилка(
-              результат && результат.помилка
-                результат.помилка
-                : 'Google РЅРµ РїС–РґС‚РІРµСЂРґРёРІ Р·Р°РІРµСЂС€РµРЅРЅСЏ Р·Р°РґР°С‡С–.'
+          fail(
+            new Error(
+              result && result.error
+                ? result.error
+                : 'Google не підтвердив завершення задачі.'
             )
           );
 
-          повернення;
+          return;
         }
 
-        закінчено = правда;
-        очищення();
-        вирішити(результат);
+        finished = true;
+        cleanup();
+        resolve(result);
       };
 
-      скрипт.onerror = () => {
-        невдача(
-          нова помилка(
-            'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІРµСЂС€РёС‚Рё Р·Р°РґР°С‡Сѓ.'
+      script.onerror = () => {
+        fail(
+          new Error(
+            'Не вдалося завершити задачу.'
           )
         );
       };
 
-      константні параметри =
-        нові параметри пошуку URL({
-          API: 'completeTask',
-          зворотний виклик: назва зворотного виклику,
-          ідентифікатор: ідентифікатор,
-          t: String(Дата.зараз())
+      const parameters =
+        new URLSearchParams({
+          api: 'completeTask',
+          callback: callbackName,
+          id: id,
+          t: String(Date.now())
         });
 
-      скрипт.src =
+      script.src =
         SYNC_URL +
         '?' +
         parameters.toString();
 
       document.body.appendChild(
-        сценарій
+        script
       );
 
-      Ідентифікатор_тайму_ауту = встановити_час_ауту(
+      timeoutId = setTimeout(
         () => {
-          невдача(
-            нова помилка(
-              'Google РЅРµ РІС–РґРїРѕРІС–РІ РїСЂРѕС‚СЏРіРѕРј 20 СЃРµРєСѓРЅРґ.'
+          fail(
+            new Error(
+              'Google не відповів протягом 20 секунд.'
             )
           );
         },
@@ -1194,239 +1196,241 @@ const SYNC_URL =
 }
 
 
-асинхронна функція completeServerTask(
-  ідентифікатор,
-  прапорець
+async function completeServerTask(
+  id,
+  checkbox
 ) {
-  якщо (!navigator.onLine) {
+  if (!navigator.onLine) {
     checkbox.checked = false;
 
-    сповіщення(
-      'Р»Р»СЏ Р·Р°РІРµСЂС€РµРЅРЅСЏ Р·Р°РґР°С‡С– РїРѕС‚СЂС–Р±РµРЅ с–РЅС‚РµСЂРЅРµС‚.'
+    alert(
+      'Для завершення задачі потрібен інтернет.'
     );
 
-    повернення;
+    return;
   }
 
   checkbox.disabled = true;
 
-  спробуйте {
-    очікувати надсиланняCompleteTaskToServer(
-      ідентифікатор
+  try {
+    await sendCompleteTaskToServer(
+      id
     );
 
-    серверніЗавдання =
+    serverTasks =
       serverTasks.filter(
-        завдання => завдання.ідентифікатор !== ідентифікатор
+        task => task.id !== id
       );
 
     renderTasks();
 
-    очікувати завантаженняЗавданьСервера();
-    очікувати завантаженняСьогоднішніхДаних();
+    await loadServerTasks();
+    await loadTodayData();
 
-  } catch (помилка) {
-    console.error(помилка);
+  } catch (error) {
+    console.error(error);
 
     checkbox.checked = false;
     checkbox.disabled = false;
 
-    сповіщення(
-      'РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІРµСЂС€РёС‚Рё Р·Р°РґР°С‡Сѓ: ' +
-      повідомлення.помилка
+    alert(
+      'Не вдалося завершити задачу: ' +
+      error.message
     );
   }
 }
 
 
-функція sendCompleteRegularToServer(id) {
-  константні параметри =
-    нові параметри пошуку URL({
-      API: 'completeRegular',
-      ідентифікатор: ідентифікатор,
-      t: String(Дата.зараз())
+function sendCompleteRegularToServer(id) {
+  const parameters =
+    new URLSearchParams({
+      api: 'completeRegular',
+      id: id,
+      t: String(Date.now())
     });
 
-  повернути вибірку(
+  return fetch(
     SYNC_URL +
     '?' +
     parameters.toString(),
     {
-      метод: 'ОТРИМАТИ',
-      режим: «без корів»,
-      кеш: 'без сховища'
+      method: 'GET',
+      mode: 'no-cors',
+      cache: 'no-store'
     }
   );
 }
 
 
-асинхронна функція completeRegularFromPwa(
-  ідентифікатор,
-  прапорець
+async function completeRegularFromPwa(
+  id,
+  checkbox
 ) {
-  якщо (!navigator.onLine) {
+  if (!navigator.onLine) {
     checkbox.checked = false;
 
-    сповіщення(
-      'Р”Р»СЏ РІРёРєРѕРЅР°РЅРЅСЏ СЂРµРіСѓР»СЏСЂРЅРѕС— РґС–С— РїРѕС‚СЂС–Р±РµРЅ С–РЅС‚РµСЂРЅРµС‚.'
+    alert(
+      'Для виконання регулярної дії потрібен інтернет.'
     );
 
-    повернення;
+    return;
   }
 
   checkbox.disabled = true;
 
-  спробуйте {
-    очікувати sendCompleteRegularToServer(id);
+  try {
+    await sendCompleteRegularToServer(id);
 
-  } catch (помилка) {
-    console.log(помилка);
+  } catch (error) {
+    console.log(error);
   }
 
-  чекати на нову обіцянку(вирішити => {
-    setTimeout(вирішити, 1000);
+  await new Promise(resolve => {
+    setTimeout(resolve, 1000);
   });
 
-  очікувати завантаженняСьогоднішніхДаних();
+  await loadTodayData();
 }
-функція toggleLocalTask(id) {
-  константні завдання =
-    отриматиЛокальніЗавдання();
 
-  константна задача =
+
+function toggleLocalTask(id) {
+  const tasks =
+    getLocalTasks();
+
+  const task =
     tasks.find(
-      елемент => елемент.ідентифікатор === ідентифікатор
+      item => item.id === id
     );
 
-  якщо (!завдання || завдання.синхронізовано) {
-    повернення;
+  if (!task || task.synced) {
+    return;
   }
 
-  завдання.виконано = !завдання.виконано;
+  task.done = !task.done;
 
-  зберегтиЛокальніЗавдання(завдання);
+  saveLocalTasks(tasks);
   renderTasks();
 }
 
 
-функція sendTaskToServer(завдання) {
-  повернути нову обіцянку(
-    (вирішити, відхилити) => {
-      constНазва зворотного виклику =
+function sendTaskToServer(task) {
+  return new Promise(
+    (resolve, reject) => {
+      const callbackName =
         'lifeOsSyncCallback_' +
-        Дата.зараз() +
+        Date.now() +
         '_' +
         Math.random()
           .toString(36)
           .slice(2);
 
-      константний скрипт =
-        document.createElement('скрипт');
+      const script =
+        document.createElement('script');
 
-      нехай timeoutId;
-      нехай закінчено = хибно;
+      let timeoutId;
+      let finished = false;
 
-      функція очищення() {
-        якщо (ідентифікатор часу очікування) {
-          clearTimeout(ідентифікатор_тайму_ауту);
+      function cleanup() {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
 
-        видалити вікно[ім'я зворотного виклику];
+        delete window[callbackName];
 
-        якщо (script.parentNode) {
+        if (script.parentNode) {
           script.parentNode.removeChild(
-            сценарій
+            script
           );
         }
       }
 
-      функція fail(помилка) {
-        якщо (завершено) {
-          повернення;
+      function fail(error) {
+        if (finished) {
+          return;
         }
 
-        закінчено = правда;
-        очищення();
-        відхилити(помилка);
-      }
+        finished = true;
+        cleanup();
+        reject(error);
+              }
 
-      вікно[ім'я зворотного виклику] = результат => {
-        якщо (завершено) {
-          повернення;
+      window[callbackName] = result => {
+        if (finished) {
+          return;
         }
 
-        якщо (
-          !результат ||
-          результат.успіх !== true ||
-          !результат.ідентифікатор
+        if (
+          !result ||
+          result.success !== true ||
+          !result.id
         ) {
-          невдача(
-            нова помилка(
-              результат && результат.помилка
-                результат.помилка
-                : 'Google РЅРµ РїС–РґС‚РІРµСЂРґРёРІ СЃС‚РІРѕСЂРµРЅРЅСЏ Р·Р°РґР°С‡С–.'
+          fail(
+            new Error(
+              result && result.error
+                ? result.error
+                : 'Google не підтвердив створення задачі.'
             )
           );
 
-          повернення;
+          return;
         }
 
-        закінчено = правда;
-        очищення();
-        вирішити(результат);
+        finished = true;
+        cleanup();
+        resolve(result);
       };
 
-      скрипт.onerror = () => {
-        невдача(
-          нова помилка(
-            'РќРµ РІРґР°Р»РѕСЃСЏ РІС–РґРїСЂР°РІРёС‚Рё Р·Р°РґР°С‡Сѓ.'
+      script.onerror = () => {
+        fail(
+          new Error(
+            'Не вдалося відправити задачу.'
           )
         );
       };
 
-      константні параметри =
-        нові параметри пошуку URL({
-          API: 'синхронізаціяЗавдання',
+      const parameters =
+        new URLSearchParams({
+          api: 'syncTask',
 
-          зворотний виклик:
-            Назва зворотного виклику,
+          callback:
+            callbackName,
 
-          Ідентифікатор запиту клієнта:
-            ідентифікатор завдання,
+          clientRequestId:
+            task.id,
 
-          назва:
+          title:
             task.title || '',
 
-          площа:
+          area:
             task.area || '',
 
-          пріоритет:
-            завдання.пріоритет || 'РЎРµСЂРµРґРЅС–Р№',
+          priority:
+            task.priority || 'Середній',
 
-          термін:
-            термін.завдання || '',
+          deadline:
+            task.deadline || '',
 
-          опис:
-            опис.завдання || '',
+          description:
+            task.description || '',
 
-          т:
-            Рядок(Дата.зараз())
+          t:
+            String(Date.now())
         });
 
-      скрипт.src =
+      script.src =
         SYNC_URL +
         '?' +
         parameters.toString();
 
       document.body.appendChild(
-        сценарій
+        script
       );
 
-      Ідентифікатор_тайму_ауту = встановити_час_ауту(
+      timeoutId = setTimeout(
         () => {
-          невдача(
-            нова помилка(
-              'Google РЅРµ РІС–РґРїРѕРІС–РІ РїСЂРѕС‚СЏРіРѕРј 20 СЃРµРєСѓРЅРґ.'
+          fail(
+            new Error(
+              'Google не відповів протягом 20 секунд.'
             )
           );
         },
@@ -1437,135 +1441,136 @@ const SYNC_URL =
 }
 
 
-асинхронна функція syncLocalTasks() {
-  якщо (
+async function syncLocalTasks() {
+  if (
     !navigator.onLine ||
-    Виконання синхронізації
+    syncInProgress
   ) {
-    оновленняСтатусу();
-    повернення;
+    updateStatus();
+    return;
   }
 
-  константні завдання =
-    отриматиЛокальніЗавдання();
+  const tasks =
+    getLocalTasks();
 
-  константа очікування =
+  const pending =
     tasks.filter(
-      завдання => !task.синхронізовано
+      task => !task.synced
     );
 
-  якщо (pending.length === 0) {
-    оновленняСтатусу();
-    очікувати завантаженняЗавданьСервера();
-    очікувати завантаженняСьогоднішніхДаних();
-    повернення;
+  if (pending.length === 0) {
+    updateStatus();
+    await loadServerTasks();
+    await loadTodayData();
+    return;
   }
 
-  синхронізаціяПрогресу = true;
-  оновленняСтатусу();
+  syncInProgress = true;
+  updateStatus();
 
-  нехай syncError = null;
+  let syncError = null;
 
-  спробуйте {
-    для (const завдання очікування) {
-      спробуйте {
-        константний результат =
-          очікувати sendTaskToServer(
-            завдання
+  try {
+    for (const task of pending) {
+      try {
+        const result =
+          await sendTaskToServer(
+            task
           );
 
         task.synced = true;
         task.serverId = result.id;
 
-        зберегтиЛокальніЗавдання(завдання);
+        saveLocalTasks(tasks);
 
-      } catch (помилка) {
-        console.error(помилка);
-        syncError = помилка;
-        перерва;
+      } catch (error) {
+        console.error(error);
+        syncError = error;
+        break;
       }
     }
 
-  } нарешті {
-    синхронізаціяПрогресу = хибність;
+  } finally {
+    syncInProgress = false;
 
     renderTasks();
-    оновленняСтатусу();
+    updateStatus();
 
-    очікувати завантаженняЗавданьСервера();
-    очікувати завантаженняСьогоднішніхДаних();
+    await loadServerTasks();
+    await loadTodayData();
 
-    якщо (синхронізація) {
-      сповіщення(
-        'Р°РґР°С‡Р° Р·Р°Р»РёС€РёР»Р°СЃСЏ РІ С‡РµСЂР·С–: ' +
+    if (syncError) {
+      alert(
+        'Задача залишилася в черзі: ' +
         syncError.message
       );
     }
   }
 }
 
-функція оновленняСтатусу() {
-  константний статус =
+
+function updateStatus() {
+  const status =
     document.getElementById(
-      «статус»
+      'status'
     );
 
-  константа очікування =
-    отриматиКолічествоОчікувань();
+  const pending =
+    getPendingCount();
 
-  якщо (!navigator.onLine) {
+  if (!navigator.onLine) {
     status.textContent =
-      очікує > 0
-        ? `РћС„Р»Р°Р№РЅ вЂў ${очікує} РІ С‡РµСЂР·с–`
-        : 'РћС„Р»Р°Р№РЅ';
+      pending > 0
+        ? `Офлайн • ${pending} в черзі`
+        : 'Офлайн';
 
-    повернення;
+    return;
   }
 
-  якщо (синхронізація в процесі) {
+  if (syncInProgress) {
     status.textContent =
-      очікує > 0
-        ? `РћРЅР»Р°Р№РЅ вЂў СЃРёРЅС…СЂРѕРЅС–Р·Р°С†С–СЏ ${pending}`
-        : 'РћРЅР»Р°Р№РЅ вЂў СЃРёРЅС…СЂРѕРЅС–Р·Р°С†С–СЏ';
+      pending > 0
+        ? `Онлайн • синхронізація ${pending}`
+        : 'Онлайн • синхронізація';
 
-    повернення;
+    return;
   }
 
-  якщо (serverLoadError) {
+  if (serverLoadError) {
     status.textContent =
-      очікує > 0
-        ? `РћРЅР»Р°Р№РЅ вЂў ${pending} РІ С‡РµСЂР·С– вЂў Google РЅРµРґРѕСЃС‚СѓРїРЅРёР№`
-        : 'РћРЅР»Р°Р№РЅ вЂў Google РЅРµРґРѕСЃС‚СѓРїРЅРёР№';
+      pending > 0
+        ? `Онлайн • ${pending} в черзі • Google недоступний`
+        : 'Онлайн • Google недоступний';
 
-    повернення;
+    return;
   }
 
   status.textContent =
-    очікує > 0
-      ? `РћРЅР»Р°Р№РЅ вЂў ${очікує} РѕС‡С–РєСѓС”`
-      : 'РћРЅР»Р°Р№РЅ вњ“';
+    pending > 0
+      ? `Онлайн • ${pending} очікує`
+      : 'Онлайн ✓';
 }
 
 
-функція escapeHtml(значення) {
-  повернути рядок(
-    значення == null
+function escapeHtml(value) {
+  return String(
+    value == null
       ? ''
-      значення
+      : value
   )
-    .replace(/&/g, '&')
-    .replace(/</g, '<')
-    .replace(/>/g, '>')
-    .replace(/"/g, '"')
-    .replace(/'/g, ''');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 
-функція escapeJs(значення) {
-  повернути рядок(
-    значення == null
+function escapeJs(value) {
+  return String(
+    value == null
       ? ''
-      значення
+      : value
   )
     .replace(/\\/g, '\\\\')
     .replace(/'/g, "\\'")
@@ -1574,61 +1579,61 @@ const SYNC_URL =
 }
 
 
-документ
-  .getElementById('дата')
+document
+  .getElementById('date')
   .textContent =
-    нова дата()
+    new Date()
       .toLocaleDateString(
-        «uk-UA»
+        'uk-UA'
       );
 
 
-документ
-  .getElementById('модальний_модуль_завдання')
+document
+  .getElementById('taskModal')
   .addEventListener(
-    «клацнути»,
-    подія => {
-      якщо (
-        подія.ціль.ідентифікатор ===
-        'модальний елемент завдання'
+    'click',
+    event => {
+      if (
+        event.target.id ===
+        'taskModal'
       ) {
-        закритиМодальнийМодал();
+        closeTaskModal();
       }
     }
   );
 
 
 window.addEventListener(
-  «офлайн»,
+  'offline',
   () => {
-    оновленняСтатусу();
+    updateStatus();
     renderTasks();
-    рендерСьогодні();
+    renderToday();
   }
 );
 
 
 window.addEventListener(
-  «онлайн»,
+  'online',
   () => {
-    оновленняСтатусу();
-    синхронізуватиЛокальніЗавдання();
+    updateStatus();
+    syncLocalTasks();
   }
 );
 
 
-if ('serviceWorker' у навігаторі) {
+if ('serviceWorker' in navigator) {
   navigator.serviceWorker
     .register('./sw.js')
     .catch(console.error);
 }
 
 
-оновленняСтатусу();
+updateStatus();
 renderTasks();
-рендерСьогодні();
-синхронізуватиЛокальніЗавдання();
-</скрипт>
+renderToday();
+syncLocalTasks();
+</script>
 
 </body>
 </html>
