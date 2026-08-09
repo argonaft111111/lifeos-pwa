@@ -1405,7 +1405,10 @@ async function completeServerTask(
 }
 
 
-async function sendCompleteRegularToServer(id) {
+async function sendCompleteRegularToServer(
+  id,
+  completionDate
+) {
   await fetch(
     SYNC_URL,
     {
@@ -1422,12 +1425,49 @@ async function sendCompleteRegularToServer(id) {
 
       body: JSON.stringify({
         action: 'completeRegular',
-        id: id
+        id: id,
+        date: completionDate || ''
       })
     }
   );
 }
+  async function syncRegularQueue() {
+  if (!navigator.onLine) {
+    return;
+  }
 
+  const queue =
+    getRegularQueue();
+
+  if (queue.length === 0) {
+    return;
+  }
+
+  const remaining = [];
+
+  for (const item of queue) {
+    try {
+      await sendCompleteRegularToServer(
+        item.id,
+        item.date
+      );
+
+      await waitForServer(1000);
+
+    } catch (error) {
+      console.error(error);
+      remaining.push(item);
+    }
+  }
+
+  saveRegularQueue(remaining);
+
+  await waitForServer(1000);
+  await loadTodayData();
+
+  renderToday();
+  updateStatus();
+}
 
 function waitForServer(milliseconds) {
   return new Promise(resolve => {
@@ -1816,11 +1856,11 @@ document
 
 
 window.addEventListener(
-  'offline',
+  'online',
   () => {
     updateStatus();
-    renderTasks();
-    renderToday();
+    syncLocalTasks();
+    syncRegularQueue();
   }
 );
 
@@ -1845,6 +1885,7 @@ updateStatus();
 renderTasks();
 renderToday();
 syncLocalTasks();
+syncRegularQueue();
 </script>
 
 </body>
