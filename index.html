@@ -27,7 +27,7 @@
       width: 100%;
       max-width: 720px;
       margin: 0 auto;
-      padding: 14px 12px 100px;
+      padding: 14px 12px 110px;
     }
 
     .header {
@@ -109,7 +109,7 @@
     .fab {
       position: fixed;
       right: 20px;
-      bottom: 24px;
+      bottom: 82px;
       z-index: 10;
       width: 58px;
       height: 58px;
@@ -182,6 +182,69 @@
       cursor: pointer;
     }
 
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .program-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .program-text {
+      margin-top: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      max-width: 720px;
+      min-height: 66px;
+      padding-bottom: env(safe-area-inset-bottom);
+      border-top: 1px solid #ddd;
+      background: #fff;
+    }
+
+    .nav-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 0;
+      background: transparent;
+      color: #777;
+      cursor: pointer;
+    }
+
+    .nav-button.active {
+      color: #111;
+      font-weight: 700;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-label {
+      font-size: 11px;
+    }
+
     @media (max-width: 420px) {
       .app {
         padding-right: 10px;
@@ -213,20 +276,50 @@
     <div class="date" id="date"></div>
   </div>
 
-  <div class="section">
-
-    <div class="section-title">
-      АКТИВНІ ЗАДАЧІ
-      <span id="taskCount"></span>
+  <div class="screen active" id="screenToday">
+    <div id="todayContent">
+      <div class="section">
+        <div class="empty">Завантаження...</div>
+      </div>
     </div>
+  </div>
 
-    <div id="taskList">
-      <div class="empty">Завантаження...</div>
+  <div class="screen" id="screenTasks">
+    <div class="section">
+      <div class="section-title">
+        АКТИВНІ ЗАДАЧІ
+        <span id="taskCount"></span>
+      </div>
+
+      <div id="taskList">
+        <div class="empty">Завантаження...</div>
+      </div>
     </div>
-
   </div>
 
 </div>
+
+<nav class="bottom-nav">
+  <button
+    class="nav-button active"
+    type="button"
+    data-screen="Today"
+    onclick="openScreen('Today', this)"
+  >
+    <span class="nav-icon">⌂</span>
+    <span class="nav-label">Сьогодні</span>
+  </button>
+
+  <button
+    class="nav-button"
+    type="button"
+    data-screen="Tasks"
+    onclick="openScreen('Tasks', this)"
+  >
+    <span class="nav-icon">✓</span>
+    <span class="nav-label">Задачі</span>
+  </button>
+</nav>
 
 <button
   class="fab"
@@ -326,6 +419,261 @@ const SYNC_URL =
 let serverTasks = [];
 let syncInProgress = false;
 let serverLoadError = false;
+let todayData = null;
+let activeScreen = 'Today';
+
+
+function openScreen(screenName, button) {
+  document
+    .querySelectorAll('.screen')
+    .forEach(screen => {
+      screen.classList.remove('active');
+    });
+
+  document
+    .querySelectorAll('.nav-button')
+    .forEach(item => {
+      item.classList.remove('active');
+    });
+
+  const screen = document.getElementById(
+    'screen' + screenName
+  );
+
+  if (!screen) {
+    return;
+  }
+
+  screen.classList.add('active');
+
+  if (button) {
+    button.classList.add('active');
+  }
+
+  activeScreen = screenName;
+
+  if (screenName === 'Today') {
+    loadTodayData();
+  } else {
+    loadServerTasks();
+  }
+}
+
+
+function loadTodayData() {
+  return new Promise(resolve => {
+    if (!navigator.onLine) {
+      renderToday();
+      resolve();
+      return;
+    }
+
+    const callbackName =
+      'lifeOsTodayCallback_' +
+      Date.now() +
+      '_' +
+      Math.random().toString(36).slice(2);
+
+    const script =
+      document.createElement('script');
+
+    let timeoutId;
+    let finished = false;
+
+    function cleanup() {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
+      delete window[callbackName];
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    }
+
+    function finish() {
+      if (finished) {
+        return;
+      }
+
+      finished = true;
+      cleanup();
+      renderToday();
+      updateStatus();
+      resolve();
+    }
+
+    window[callbackName] = data => {
+      if (
+        data &&
+        data.success === true &&
+        Array.isArray(data.tasks) &&
+        Array.isArray(data.regulars)
+      ) {
+        todayData = data;
+        serverLoadError = false;
+
+        if (data.date) {
+          document.getElementById('date')
+            .textContent = data.date;
+        }
+      } else {
+        serverLoadError = true;
+      }
+
+      finish();
+    };
+
+    script.onerror = () => {
+      serverLoadError = true;
+      finish();
+    };
+
+    script.src =
+      SYNC_URL +
+      '?api=today' +
+      '&callback=' +
+      callbackName +
+      '&t=' +
+      Date.now();
+
+    document.body.appendChild(script);
+
+    timeoutId = setTimeout(
+      () => {
+        serverLoadError = true;
+        finish();
+      },
+      15000
+    );
+  });
+}
+
+
+function renderToday() {
+  const container =
+    document.getElementById('todayContent');
+
+  if (!todayData) {
+    container.innerHTML = `
+      <div class="section">
+        <div class="empty">
+          ${navigator.onLine
+            ? 'Не вдалося завантажити дані дня.'
+            : 'Дані дня недоступні офлайн.'}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const tasks = todayData.tasks || [];
+  const regulars = todayData.regulars || [];
+  const program = todayData.program || {
+    shown: false
+  };
+
+  let html = `
+    <div class="section">
+      <div class="section-title">
+        ЗАДАЧІ ${tasks.length} / 15
+      </div>
+  `;
+
+  if (tasks.length === 0) {
+    html += '<div class="empty">Задач на сьогодні немає.</div>';
+  }
+
+  tasks.forEach(task => {
+    html += `
+      <div class="item">
+        <input
+          type="checkbox"
+          onchange="completeServerTask(
+            '${escapeJs(task.id)}',
+            this
+          )"
+        >
+
+        <div>
+          <div class="item-title">
+            ${escapeHtml(task.title)}
+          </div>
+          <div class="meta">
+            ${escapeHtml(task.priority || '')}
+            ${task.deadline
+              ? ' • ' + escapeHtml(task.deadline)
+              : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+    <div class="section">
+      <div class="section-title">
+        РЕГУЛЯРНІ ${regulars.length}
+      </div>
+  `;
+
+  if (regulars.length === 0) {
+    html += '<div class="empty">Регулярних дій немає.</div>';
+  }
+
+  regulars.forEach(regular => {
+    html += `
+      <div class="item">
+        <input
+          type="checkbox"
+          ${regular.done ? 'checked disabled' : ''}
+          onchange="completeRegularFromPwa(
+            '${escapeJs(regular.id)}',
+            this
+          )"
+        >
+
+        <div>
+          <div class="item-title">
+            ${escapeHtml(regular.title)}
+          </div>
+          <div class="meta">
+            ${escapeHtml(regular.time || '')}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+    <div class="section">
+      <div class="section-title">ПРОГРАМА</div>
+  `;
+
+  if (program.shown) {
+    html += `
+      <div class="program-name">
+        ${escapeHtml(program.name || '')}
+      </div>
+      <div class="meta">
+        День ${escapeHtml(program.day)} /
+        ${escapeHtml(program.totalDays)} •
+        ${escapeHtml(program.type || '')}
+      </div>
+      <div class="program-text">
+        ${escapeHtml(program.workout || '')}
+      </div>
+    `;
+  } else {
+    html += '<div class="empty">Активної програми на сьогодні немає.</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
 
 
 function getLocalTasks() {
@@ -875,6 +1223,7 @@ async function completeServerTask(
     renderTasks();
 
     await loadServerTasks();
+    await loadTodayData();
 
   } catch (error) {
     console.error(error);
@@ -884,6 +1233,131 @@ async function completeServerTask(
 
     alert(
       'Не вдалося завершити задачу: ' +
+      error.message
+    );
+  }
+}
+
+
+function sendCompleteRegularToServer(id) {
+  return new Promise(
+    (resolve, reject) => {
+      const callbackName =
+        'lifeOsRegularCallback_' +
+        Date.now() +
+        '_' +
+        Math.random().toString(36).slice(2);
+
+      const script =
+        document.createElement('script');
+
+      let timeoutId;
+      let finished = false;
+
+      function cleanup() {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        delete window[callbackName];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      }
+
+      function fail(error) {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        cleanup();
+        reject(error);
+      }
+
+      window[callbackName] = result => {
+        if (finished) {
+          return;
+        }
+
+        if (!result || result.success !== true) {
+          fail(
+            new Error(
+              result && result.error
+                ? result.error
+                : 'Google не підтвердив виконання регулярної дії.'
+            )
+          );
+          return;
+        }
+
+        finished = true;
+        cleanup();
+        resolve(result);
+      };
+
+      script.onerror = () => {
+        fail(
+          new Error(
+            'Не вдалося виконати регулярну дію.'
+          )
+        );
+      };
+
+      const parameters =
+        new URLSearchParams({
+          api: 'completeRegular',
+          callback: callbackName,
+          id: id,
+          t: String(Date.now())
+        });
+
+      script.src =
+        SYNC_URL +
+        '?' +
+        parameters.toString();
+
+      document.body.appendChild(script);
+
+      timeoutId = setTimeout(
+        () => {
+          fail(
+            new Error(
+              'Google не відповів протягом 20 секунд.'
+            )
+          );
+        },
+        20000
+      );
+    }
+  );
+}
+
+
+async function completeRegularFromPwa(
+  id,
+  checkbox
+) {
+  if (!navigator.onLine) {
+    checkbox.checked = false;
+    alert(
+      'Для виконання регулярної дії потрібен інтернет.'
+    );
+    return;
+  }
+
+  checkbox.disabled = true;
+
+  try {
+    await sendCompleteRegularToServer(id);
+    await loadTodayData();
+  } catch (error) {
+    console.error(error);
+    checkbox.checked = false;
+    checkbox.disabled = false;
+    alert(
+      'Не вдалося виконати регулярну дію: ' +
       error.message
     );
   }
@@ -1056,6 +1530,7 @@ async function syncLocalTasks() {
   if (pending.length === 0) {
     updateStatus();
     await loadServerTasks();
+    await loadTodayData();
     return;
   }
 
@@ -1091,6 +1566,7 @@ async function syncLocalTasks() {
     updateStatus();
 
     await loadServerTasks();
+    await loadTodayData();
 
     if (syncError) {
       alert(
@@ -1200,6 +1676,7 @@ window.addEventListener(
   () => {
     updateStatus();
     renderTasks();
+    renderToday();
   }
 );
 
@@ -1222,6 +1699,7 @@ if ('serviceWorker' in navigator) {
 
 updateStatus();
 renderTasks();
+renderToday();
 syncLocalTasks();
 </script>
 
