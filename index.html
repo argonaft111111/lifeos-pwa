@@ -412,7 +412,107 @@
 <script>
 const STORAGE_KEY =
   'LIFE_OS_LOCAL_TASKS_V1';
+const REGULAR_QUEUE_KEY =
+  'LIFE_OS_REGULAR_QUEUE_V1';
 
+
+function getRegularQueue() {
+  try {
+    const raw =
+      localStorage.getItem(
+        REGULAR_QUEUE_KEY
+      );
+
+    if (!raw) {
+      return [];
+    }
+
+    const queue =
+      JSON.parse(raw);
+
+    return Array.isArray(queue)
+      ? queue
+      : [];
+
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+
+function saveRegularQueue(queue) {
+  localStorage.setItem(
+    REGULAR_QUEUE_KEY,
+    JSON.stringify(queue)
+  );
+}
+
+
+function getLocalDateKey() {
+  const date = new Date();
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, '0');
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, '0');
+
+  return (
+    year +
+    '-' +
+    month +
+    '-' +
+    day
+  );
+}
+
+
+function addRegularToQueue(id) {
+  const date =
+    getLocalDateKey();
+
+  const queue =
+    getRegularQueue();
+
+  const alreadyQueued =
+    queue.some(item =>
+      item.id === id &&
+      item.date === date
+    );
+
+  if (!alreadyQueued) {
+    queue.push({
+      id: id,
+      date: date,
+      createdAt:
+        new Date().toISOString()
+    });
+
+    saveRegularQueue(queue);
+  }
+
+  return date;
+}
+
+
+function isRegularQueued(id) {
+  const date =
+    getLocalDateKey();
+
+  return getRegularQueue().some(
+    item =>
+      item.id === id &&
+      item.date === date
+  );
+}
 const SYNC_URL =
   'https://script.google.com/macros/s/AKfycbyDnqbFBFjk-rZNihUR_QBezkxRZ2aibnIOCXgtmeNyj7Mv-5uxYZOKIlcWBvTxFZ-gnQ/exec';
 
