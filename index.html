@@ -414,8 +414,43 @@ const STORAGE_KEY =
   'LIFE_OS_LOCAL_TASKS_V1';
 const REGULAR_QUEUE_KEY =
   'LIFE_OS_REGULAR_QUEUE_V1';
+const TODAY_CACHE_KEY =
+  'LIFE_OS_TODAY_CACHE_V1';
+function getCachedTodayData() {
+  try {
+    const raw =
+      localStorage.getItem(
+        TODAY_CACHE_KEY
+      );
+
+    if (!raw) {
+      return null;
+    }
+
+    const data =
+      JSON.parse(raw);
+
+    return (
+      data &&
+      Array.isArray(data.tasks) &&
+      Array.isArray(data.regulars)
+    )
+      ? data
+      : null;
+
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
 
 
+function saveCachedTodayData(data) {
+  localStorage.setItem(
+    TODAY_CACHE_KEY,
+    JSON.stringify(data)
+  );
+}
 function getRegularQueue() {
   try {
     const raw =
@@ -519,7 +554,8 @@ const SYNC_URL =
 let serverTasks = [];
 let syncInProgress = false;
 let serverLoadError = false;
-let todayData = null;
+let todayData =
+  getCachedTodayData();
 let activeScreen = 'Today';
 
 
@@ -604,8 +640,9 @@ function loadTodayData(completeRegularId) {
         Array.isArray(data.tasks) &&
         Array.isArray(data.regulars)
       ) {
-        todayData = data;
-        serverLoadError = false;
+       todayData = data;
+saveCachedTodayData(data);
+serverLoadError = false;
 
         if (data.date) {
           document
