@@ -414,6 +414,8 @@ const STORAGE_KEY =
   'LIFE_OS_LOCAL_TASKS_V1';
 const REGULAR_QUEUE_KEY =
   'LIFE_OS_REGULAR_QUEUE_V1';
+  const TASK_COMPLETION_QUEUE_KEY =
+  'LIFE_OS_TASK_COMPLETION_QUEUE_V1';
 const TODAY_CACHE_KEY =
   'LIFE_OS_TODAY_CACHE_V1';
 function getCachedTodayData() {
@@ -557,7 +559,72 @@ let serverLoadError = false;
 let todayData =
   getCachedTodayData();
 let activeScreen = 'Today';
+function getTaskCompletionQueue() {
+  try {
+    const raw =
+      localStorage.getItem(
+        TASK_COMPLETION_QUEUE_KEY
+      );
 
+    if (!raw) {
+      return [];
+    }
+
+    const queue =
+      JSON.parse(raw);
+
+    return Array.isArray(queue)
+      ? queue
+      : [];
+
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+
+function saveTaskCompletionQueue(queue) {
+  localStorage.setItem(
+    TASK_COMPLETION_QUEUE_KEY,
+    JSON.stringify(queue)
+  );
+}
+
+
+function addTaskCompletionToQueue(id) {
+  const date =
+    getLocalDateKey();
+
+  const queue =
+    getTaskCompletionQueue();
+
+  const alreadyQueued =
+    queue.some(item =>
+      item.id === id &&
+      item.date === date
+    );
+
+  if (!alreadyQueued) {
+    queue.push({
+      id: id,
+      date: date,
+      createdAt:
+        new Date().toISOString()
+    });
+
+    saveTaskCompletionQueue(queue);
+  }
+
+  return date;
+}
+
+
+function isTaskCompletionQueued(id) {
+  return getTaskCompletionQueue().some(
+    item => item.id === id
+  );
+}
 
 function openScreen(screenName, button) {
   document
